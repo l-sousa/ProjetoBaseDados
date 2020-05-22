@@ -169,6 +169,49 @@ namespace Trabalho_Final
             }
         }
 
+        private void btnAdicionar_Click(object sender, EventArgs e)
+        {
+            string nome_box = textBox1.Text;
+
+            int box_contacto;
+            bool sucess = Int32.TryParse(textBox6.Text, out box_contacto);
+            if(!sucess)
+            {
+                MessageBox.Show("Contacto inválido");
+                textBox6.Text = "";
+                return;
+            }
+
+            int box_idade;
+            sucess = Int32.TryParse(textBox5.Text, out box_idade);
+            if (!sucess)
+            {
+                MessageBox.Show("Idade inválida");
+                textBox5.Text = "";
+            }
+
+            int box_nif;
+            sucess = Int32.TryParse(textBox4.Text, out box_nif);
+            if (!sucess)
+            {
+                MessageBox.Show("Nif inválido");
+                textBox4.Text = "";
+                return;
+            }
+
+            string box_endereco = textBox3.Text;
+
+            int box_nif;
+            sucess = Int32.TryParse(textBox7.Text, out box_nif);
+            if (!sucess)
+            {
+                MessageBox.Show("Nif inválido");
+                textBox4.Text = "";
+                return;
+            }
+
+        }
+
         /*
         private void Form1_Resize(object sender, EventArgs e)
         {
