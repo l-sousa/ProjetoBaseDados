@@ -248,17 +248,31 @@ namespace Trabalho_Final
 
             string box_endereco = textBox3.Text;
 
+            string specifier = "G";
+
             double box_salario;
             sucess = Double.TryParse(textBox7.Text, out box_salario);
-            if (!sucess)
+            if (sucess && box_salario.ToString().IndexOf(',') != -1)
             {
-                MessageBox.Show("Nif inválido");
-                textBox7.Text = "";
-                return;
+                if ((box_salario.ToString(specifier).Length > 9 || textBox7.Text == "") && (box_salario.ToString().Substring(box_salario.ToString().IndexOf(','))).Length > 2)
+                {
+                    System.Windows.Forms.MessageBox.Show("O campo \"Salário\" deve ter no máximo tamanho 8!");
+                    textBox7.Text = "";
+                    return;
+                }
+            }
+            else
+            {
+                if (box_salario.ToString(specifier).Length > 6 || textBox7.Text == "")
+                {
+                    System.Windows.Forms.MessageBox.Show("O campo \"Salário\" deve ter no máximo tamanho 8 em que 2 tem de ser decimais!");
+                    textBox7.Text = "";
+                    return;
+                }
             }
 
             // CRIAR CÓDIGO NECESSÁRIO PARA O INSERT
-            /*vamos precisar de fazer dois inserts, na tabela de STAFF e na tabela de PESSOA    */
+            //Inserção da pessoa
 
             using (SqlConnection SqlConn = new SqlConnection(connectionString))
             {
@@ -268,14 +282,14 @@ namespace Trabalho_Final
 
                 // INSERT 
 
-                string staff_query = "INSERT INTO PROJETO.STAFF(nif, salario, nif_clinica) VALUES (" + nif_clinica + ",\'" + nome + "\')";
-                using (SqlCommand cmd = new SqlCommand(, SqlConn))
+                string person_query = "INSERT INTO PROJETO.PESSOA(endereco, contacto, idade, nif, nome) VALUES ('" + box_endereco + "'," + box_contacto + "," + box_idade + "," + box_nif + ",'" + nome_box  + "')";
+                using (SqlCommand cmd = new SqlCommand(person_query, SqlConn))
                 {
                     int rowsAdded = cmd.ExecuteNonQuery();
                     if (rowsAdded > 0)
-                        System.Windows.Forms.MessageBox.Show("Material adicionado!");
+                        System.Windows.Forms.MessageBox.Show("Pessoa adicionada!");
                     else
-                        System.Windows.Forms.MessageBox.Show("Nao foi possível adicionar novo !");
+                        System.Windows.Forms.MessageBox.Show("Nao foi possível adicionar pessoa !");
 
                 }
 
@@ -283,6 +297,57 @@ namespace Trabalho_Final
                 if (SqlConn.State == ConnectionState.Open)
                     SqlConn.Close();
             }
+
+            //Buscar o nif da clinica
+            int nif_clinica;
+            using (SqlConnection SqlConn = new SqlConnection(connectionString))
+            {
+
+                if (SqlConn.State == ConnectionState.Closed)
+                    SqlConn.Open();
+                //--- Pesquisa na BD
+                SqlDataAdapter da = new SqlDataAdapter("SELECT nif from PROJETO.CLINICA", SqlConn);
+
+                DataTable ds = new DataTable();
+
+                da.Fill(ds);
+
+                nif_clinica = Convert.ToInt32(ds.Rows[0]["nif"]);
+
+                if (SqlConn.State == ConnectionState.Open)
+                    SqlConn.Close();
+            }
+
+            //Inserção da staff
+            using (SqlConnection SqlConn = new SqlConnection(connectionString))
+            {
+                if (SqlConn.State == ConnectionState.Closed)
+                    SqlConn.Open();
+                //--- Pesquisa na BD
+
+                // INSERT 
+
+                string staff_query = "INSERT INTO PROJETO.STAFF(nif, salario, nif_clinica) VALUES (" + box_nif + "," + box_salario + "," + nif_clinica + ")";
+                using (SqlCommand cmd = new SqlCommand(staff_query, SqlConn))
+                {
+                    int rowsAdded = cmd.ExecuteNonQuery();
+                }
+
+
+                if (SqlConn.State == ConnectionState.Open)
+                    SqlConn.Close();
+            }
+
+            //limpar as text box todas
+            textBox1.Text = "";
+            textBox3.Text = "";
+            textBox4.Text = "";
+            textBox5.Text = "";
+            textBox6.Text = "";
+            textBox7.Text = "";
+
+            //fazer load do datagrid de novo
+            showStaff("SELECT PROJETO.STAFF.nif,endereco,contacto,idade,nome FROM PROJETO.STAFF JOIN  PROJETO.PESSOA ON PROJETO.PESSOA.NIF=PROJETO.STAFF.NIF");
 
         }
 
