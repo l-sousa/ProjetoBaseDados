@@ -10,6 +10,7 @@ using System.Windows.Forms;
 using System.Data.SqlClient;
 using System.Runtime.CompilerServices;
 using System.Collections;
+using Microsoft.Win32;
 
 namespace Trabalho_Final
 {
@@ -18,9 +19,9 @@ namespace Trabalho_Final
     {
         private static Staff _instance;
 
-        private Hashtable nifs_staff = getnifs();
+        private List<int> nifs_staff = getnifs();
 
-        public static Hashtable getnifs()
+        public static List<int> getnifs()
         {
             const string connectionString = @"Data Source=tcp:mednat.ieeta.pt\\SQLSERVER,8101;Initial Catalog=p5g4; user=p5g4; password=TiagoLucas2000";
             try
@@ -30,7 +31,7 @@ namespace Trabalho_Final
                 if (con.State == ConnectionState.Closed)
                     con.Open();
 
-                string cmdst = "SELECT nif,especialidade FROM PROJETO.DENTISTA";
+                string cmdst = "SELECT nif FROM PROJETO.PESSOA";
 
                 SqlDataAdapter adap = new SqlDataAdapter(cmdst, con);
 
@@ -40,18 +41,18 @@ namespace Trabalho_Final
 
 
 
-                Hashtable nifs_dentista = new Hashtable();
+                List<int> nifs_staff = new List<int>();
 
                 foreach (DataRow dr in ds.Rows)
                 {
-                    nifs_dentista.Add(dr.Field<int>("nif"), dr.Field<string>("especialidade"));
+                    nifs_staff.Add(dr.Field<int>("nif"));
 
                 }
 
                 if (con.State == ConnectionState.Open)
                     con.Close();
 
-                return nifs_dentista;
+                return nifs_staff;
             }
 
             catch (Exception pp)
@@ -239,7 +240,7 @@ namespace Trabalho_Final
 
             int box_nif;
             sucess = Int32.TryParse(textBox4.Text, out box_nif);
-            if (!sucess || nifs_staff.ContainsKey(box_nif))
+            if (!sucess || nifs_staff.Contains(box_nif))
             {
                 MessageBox.Show("Nif inválido");
                 textBox4.Text = "";
@@ -273,7 +274,7 @@ namespace Trabalho_Final
 
             // CRIAR CÓDIGO NECESSÁRIO PARA O INSERT
             //Inserção da pessoa
-
+            Boolean inserted = false;
             using (SqlConnection SqlConn = new SqlConnection(connectionString))
             {
                 if (SqlConn.State == ConnectionState.Closed)
@@ -286,8 +287,13 @@ namespace Trabalho_Final
                 using (SqlCommand cmd = new SqlCommand(person_query, SqlConn))
                 {
                     int rowsAdded = cmd.ExecuteNonQuery();
+
                     if (rowsAdded > 0)
+                    {
+                        inserted = true;
                         System.Windows.Forms.MessageBox.Show("Pessoa adicionada!");
+                    }
+                        
                     else
                         System.Windows.Forms.MessageBox.Show("Nao foi possível adicionar pessoa !");
 
@@ -319,23 +325,28 @@ namespace Trabalho_Final
             }
 
             //Inserção da staff
-            using (SqlConnection SqlConn = new SqlConnection(connectionString))
+
+            if (inserted == true)
             {
-                if (SqlConn.State == ConnectionState.Closed)
-                    SqlConn.Open();
-                //--- Pesquisa na BD
-
-                // INSERT 
-
-                string staff_query = "INSERT INTO PROJETO.STAFF(nif, salario, nif_clinica) VALUES (" + box_nif + "," + box_salario + "," + nif_clinica + ")";
-                using (SqlCommand cmd = new SqlCommand(staff_query, SqlConn))
+                nifs_staff.Add(box_nif);
+                using (SqlConnection SqlConn = new SqlConnection(connectionString))
                 {
-                    int rowsAdded = cmd.ExecuteNonQuery();
+                    if (SqlConn.State == ConnectionState.Closed)
+                        SqlConn.Open();
+                    //--- Pesquisa na BD
+
+                    // INSERT 
+
+                    string staff_query = "INSERT INTO PROJETO.STAFF(nif, salario, nif_clinica) VALUES (" + box_nif + "," + box_salario + "," + nif_clinica + ")";
+                    using (SqlCommand cmd = new SqlCommand(staff_query, SqlConn))
+                    {
+                        int rowsAdded = cmd.ExecuteNonQuery();
+                    }
+
+
+                    if (SqlConn.State == ConnectionState.Open)
+                        SqlConn.Close();
                 }
-
-
-                if (SqlConn.State == ConnectionState.Open)
-                    SqlConn.Close();
             }
 
             //limpar as text box todas
