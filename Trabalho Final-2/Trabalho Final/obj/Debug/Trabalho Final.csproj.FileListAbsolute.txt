@@ -58,3 +58,23 @@ C:\Users\tiago\OneDrive\Documentos\GitHub\ProjetoBaseDados\Trabalho Final-2\Trab
 C:\Users\tiago\OneDrive\Documentos\GitHub\ProjetoBaseDados\Trabalho Final-2\Trabalho Final\bin\Debug\MetroFramework.dll
 C:\Users\tiago\OneDrive\Documentos\GitHub\ProjetoBaseDados\Trabalho Final-2\Trabalho Final\bin\Debug\MetroFramework.Fonts.dll
 C:\Users\tiago\OneDrive\Documentos\GitHub\ProjetoBaseDados\Trabalho Final-2\Trabalho Final\obj\Debug\Trabalho Final.csproj.CopyComplete
+C:\Users\botto\Desktop\Trabalho Final-2\Trabalho Final-2\Trabalho Final\bin\Debug\Trabalho Final.exe.config
+C:\Users\botto\Desktop\Trabalho Final-2\Trabalho Final-2\Trabalho Final\bin\Debug\Trabalho Final.exe
+C:\Users\botto\Desktop\Trabalho Final-2\Trabalho Final-2\Trabalho Final\bin\Debug\Trabalho Final.pdb
+C:\Users\botto\Desktop\Trabalho Final-2\Trabalho Final-2\Trabalho Final\bin\Debug\MetroFramework.Design.dll
+C:\Users\botto\Desktop\Trabalho Final-2\Trabalho Final-2\Trabalho Final\bin\Debug\MetroFramework.dll
+C:\Users\botto\Desktop\Trabalho Final-2\Trabalho Final-2\Trabalho Final\bin\Debug\MetroFramework.Fonts.dll
+C:\Users\botto\Desktop\Trabalho Final-2\Trabalho Final-2\Trabalho Final\obj\Debug\Trabalho Final.csprojAssemblyReference.cache
+C:\Users\botto\Desktop\Trabalho Final-2\Trabalho Final-2\Trabalho Final\obj\Debug\Trabalho_Final.Consultas.resources
+C:\Users\botto\Desktop\Trabalho Final-2\Trabalho Final-2\Trabalho Final\obj\Debug\Trabalho_Final.Form1.resources
+C:\Users\botto\Desktop\Trabalho Final-2\Trabalho Final-2\Trabalho Final\obj\Debug\Trabalho_Final.MaterialDentário.resources
+C:\Users\botto\Desktop\Trabalho Final-2\Trabalho Final-2\Trabalho Final\obj\Debug\Trabalho_Final.Home.resources
+C:\Users\botto\Desktop\Trabalho Final-2\Trabalho Final-2\Trabalho Final\obj\Debug\Trabalho_Final.Pacientes.resources
+C:\Users\botto\Desktop\Trabalho Final-2\Trabalho Final-2\Trabalho Final\obj\Debug\Trabalho_Final.Pagamento.resources
+C:\Users\botto\Desktop\Trabalho Final-2\Trabalho Final-2\Trabalho Final\obj\Debug\Trabalho_Final.Properties.Resources.resources
+C:\Users\botto\Desktop\Trabalho Final-2\Trabalho Final-2\Trabalho Final\obj\Debug\Trabalho_Final.Staff.resources
+C:\Users\botto\Desktop\Trabalho Final-2\Trabalho Final-2\Trabalho Final\obj\Debug\Trabalho Final.csproj.GenerateResource.cache
+C:\Users\botto\Desktop\Trabalho Final-2\Trabalho Final-2\Trabalho Final\obj\Debug\Trabalho Final.csproj.CoreCompileInputs.cache
+C:\Users\botto\Desktop\Trabalho Final-2\Trabalho Final-2\Trabalho Final\obj\Debug\Trabalho Final.csproj.CopyComplete
+C:\Users\botto\Desktop\Trabalho Final-2\Trabalho Final-2\Trabalho Final\obj\Debug\Trabalho Final.exe
+C:\Users\botto\Desktop\Trabalho Final-2\Trabalho Final-2\Trabalho Final\obj\Debug\Trabalho Final.pdb

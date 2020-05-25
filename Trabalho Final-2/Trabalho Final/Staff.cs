@@ -23,6 +23,7 @@ namespace Trabalho_Final
 
         public static List<int> getnifs()
         {
+           
             const string connectionString = @"Data Source=tcp:mednat.ieeta.pt\\SQLSERVER,8101;Initial Catalog=p5g4; user=p5g4; password=TiagoLucas2000";
             try
 
@@ -74,11 +75,14 @@ namespace Trabalho_Final
         }
         public Staff()
         {
+          
             InitializeComponent();
+            
         }
 
         private void Staff_Load(object sender, EventArgs e)
         {
+           
             showStaff("SELECT PROJETO.STAFF.nif,endereco,contacto,idade,nome FROM PROJETO.STAFF JOIN  PROJETO.PESSOA ON PROJETO.PESSOA.NIF=PROJETO.STAFF.NIF");
         }
 
@@ -272,6 +276,16 @@ namespace Trabalho_Final
                 }
             }
 
+            string profissao;
+            if (comboBox1.SelectedIndex > -1)
+            {
+                profissao = comboBox1.Text;
+            } else
+            {
+                System.Windows.Forms.MessageBox.Show("Selecione uma profissão!");
+                return;
+            }
+                
             // CRIAR CÓDIGO NECESSÁRIO PARA O INSERT
             //Inserção da pessoa
             Boolean inserted = false;
@@ -281,10 +295,10 @@ namespace Trabalho_Final
                     SqlConn.Open();
                 //--- Pesquisa na BD
 
-                // INSERT 
+                // STORED PROCEDURES
 
-                string person_query = "INSERT INTO PROJETO.PESSOA(endereco, contacto, idade, nif, nome) VALUES ('" + box_endereco + "'," + box_contacto + "," + box_idade + "," + box_nif + ",'" + nome_box  + "')";
-                using (SqlCommand cmd = new SqlCommand(person_query, SqlConn))
+                string query = "PROJETO.insert_staff()";
+                using (SqlCommand cmd = new SqlCommand(query, SqlConn))
                 {
                     int rowsAdded = cmd.ExecuteNonQuery();
 
@@ -361,6 +375,52 @@ namespace Trabalho_Final
             showStaff("SELECT PROJETO.STAFF.nif,endereco,contacto,idade,nome FROM PROJETO.STAFF JOIN  PROJETO.PESSOA ON PROJETO.PESSOA.NIF=PROJETO.STAFF.NIF");
 
         }
+
+        private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            string profissao;
+            if (comboBox1.SelectedIndex > -1)
+            {
+
+                profissao = comboBox1.Text.Trim();
+                MessageBox.Show(profissao);
+
+                if (profissao.Equals("DENTISTA"))
+                {
+
+                    label8.Visible = true;
+                    label9.Visible = true;
+                    label10.Visible = true;
+                    label11.Visible = true;
+                    textBox8.Visible = true;
+                    textBox9.Visible = true;
+
+                }
+                else
+                {
+                    label8.Visible = false;
+                    label9.Visible = false;
+                    label10.Visible = false;
+                    label11.Visible = false;
+                    textBox8.Visible = false;
+                    textBox9.Visible = false;
+                }
+            }
+            else
+            {
+                System.Windows.Forms.MessageBox.Show("Selecione uma profissão!");
+                return;
+            }
+        }
+
+
+
+
+
+
+
+
+
 
         /*
         private void Form1_Resize(object sender, EventArgs e)

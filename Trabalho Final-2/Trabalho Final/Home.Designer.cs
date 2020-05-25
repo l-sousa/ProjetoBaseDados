@@ -38,9 +38,10 @@
             // 
             // AdiConsulta
             // 
-            this.AdiConsulta.Location = new System.Drawing.Point(3, 335);
+            this.AdiConsulta.Location = new System.Drawing.Point(36, 379);
+            this.AdiConsulta.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.AdiConsulta.Name = "AdiConsulta";
-            this.AdiConsulta.Size = new System.Drawing.Size(209, 34);
+            this.AdiConsulta.Size = new System.Drawing.Size(157, 28);
             this.AdiConsulta.TabIndex = 13;
             this.AdiConsulta.Text = "Adicionar Consulta";
             this.AdiConsulta.UseVisualStyleBackColor = true;
@@ -48,9 +49,10 @@
             // 
             // btnProcuraConsulta
             // 
-            this.btnProcuraConsulta.Location = new System.Drawing.Point(308, 292);
+            this.btnProcuraConsulta.Location = new System.Drawing.Point(265, 344);
+            this.btnProcuraConsulta.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.btnProcuraConsulta.Name = "btnProcuraConsulta";
-            this.btnProcuraConsulta.Size = new System.Drawing.Size(105, 28);
+            this.btnProcuraConsulta.Size = new System.Drawing.Size(79, 23);
             this.btnProcuraConsulta.TabIndex = 12;
             this.btnProcuraConsulta.Text = "Procurar";
             this.btnProcuraConsulta.UseVisualStyleBackColor = true;
@@ -59,40 +61,44 @@
             // textBox1
             // 
             this.textBox1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.8F);
-            this.textBox1.Location = new System.Drawing.Point(3, 292);
+            this.textBox1.Location = new System.Drawing.Point(36, 344);
+            this.textBox1.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.textBox1.Name = "textBox1";
-            this.textBox1.Size = new System.Drawing.Size(290, 28);
+            this.textBox1.Size = new System.Drawing.Size(218, 24);
             this.textBox1.TabIndex = 11;
             // 
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(3, 12);
+            this.label1.Location = new System.Drawing.Point(2, 10);
+            this.label1.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(70, 17);
+            this.label1.Size = new System.Drawing.Size(53, 13);
             this.label1.TabIndex = 10;
             this.label1.Text = "Consultas";
             // 
             // dataGridView1
             // 
             this.dataGridView1.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.dataGridView1.Location = new System.Drawing.Point(3, 32);
+            this.dataGridView1.Location = new System.Drawing.Point(0, 25);
+            this.dataGridView1.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.dataGridView1.Name = "dataGridView1";
             this.dataGridView1.RowHeadersWidth = 51;
-            this.dataGridView1.Size = new System.Drawing.Size(747, 241);
+            this.dataGridView1.Size = new System.Drawing.Size(761, 290);
             this.dataGridView1.TabIndex = 9;
             // 
             // Home
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.Controls.Add(this.AdiConsulta);
             this.Controls.Add(this.btnProcuraConsulta);
             this.Controls.Add(this.textBox1);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.dataGridView1);
+            this.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.Name = "Home";
-            this.Size = new System.Drawing.Size(750, 381);
+            this.Size = new System.Drawing.Size(765, 425);
             this.Load += new System.EventHandler(this.Home_Load);
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).EndInit();
             this.ResumeLayout(false);
