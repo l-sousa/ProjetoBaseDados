@@ -303,20 +303,34 @@ namespace Trabalho_Final
                 //--- Pesquisa na BD
 
                 // INSERT 
-                string query = "PROJETO.insert_staff(" + especialidade + "," + numero_ordem + "," + nome_box + "," + box_contacto + "," + box_nif + "," + box_idade + "," + box_endereco + "," + box_salario + "," + profissao + ")";
+                //, @idade int, @endereco varchar(100), @salario decimal(8,2), @profissao varchar(100) 
+
                 SqlConnection conn = new SqlConnection(connectionString);
-
+                string query = "PROJETO.insert_staff";
                 SqlCommand cmd = new SqlCommand(query, conn);
-
                 cmd.CommandType = CommandType.StoredProcedure;
-                cmd.Parameters.Add("@retValue", System.Data.SqlDbType.Int).Direction = System.Data.ParameterDirection.ReturnValue;
+                cmd.Parameters.Add("@especialidade", SqlDbType.VarChar).Value = null;
+                cmd.Parameters.Add("@numero_ordem", SqlDbType.Int).Value = numero_ordem;
+                cmd.Parameters.Add("@nome", SqlDbType.VarChar).Value = nome_box;
+                cmd.Parameters.Add("@contacto", SqlDbType.Int).Value = box_contacto;
+                cmd.Parameters.Add("@nif", SqlDbType.Int).Value = box_nif;
+                cmd.Parameters.Add("@idade", SqlDbType.Int).Value = box_idade;
+                cmd.Parameters.Add("@endereco", SqlDbType.VarChar).Value = box_endereco;
+                cmd.Parameters.Add("@salario", SqlDbType.Decimal).Value = box_salario;
+                cmd.Parameters.Add("@profissao", SqlDbType.VarChar).Value = profissao;
 
-                int retval = (int)cmd.Parameters["@retValue"].Value;
-                MessageBox.Show(""+retval);
+                SqlParameter returnParameter = cmd.Parameters.Add("@retval", SqlDbType.Int);
+                returnParameter.Direction = ParameterDirection.ReturnValue;
+                conn.Open();
+                cmd.ExecuteNonQuery();
+
+                int id = (int)returnParameter.Value;
+                MessageBox.Show("" + id);
+
                 if (SqlConn.State == ConnectionState.Open)
                     SqlConn.Close();
             }
-
+           
 
             //limpar as text box todas
             textBox1.Text = "";
