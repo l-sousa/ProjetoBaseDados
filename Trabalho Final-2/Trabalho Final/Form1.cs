@@ -136,5 +136,6 @@ namespace Trabalho_Final
                 Pagamento.Instance.BringToFront();
             }
         }
+
     }
 }

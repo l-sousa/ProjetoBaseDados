@@ -14,54 +14,11 @@ using Microsoft.Win32;
 
 namespace Trabalho_Final
 {
-    
+
     public partial class Staff : UserControl
     {
         private static Staff _instance;
 
-        private List<int> nifs_staff = getnifs();
-
-        public static List<int> getnifs()
-        {
-            const string connectionString = @"Data Source=tcp:mednat.ieeta.pt\\SQLSERVER,8101;Initial Catalog=p5g4; user=p5g4; password=TiagoLucas2000";
-            try
-
-            {
-                SqlConnection con = new SqlConnection(connectionString);
-                if (con.State == ConnectionState.Closed)
-                    con.Open();
-
-                string cmdst = "SELECT nif FROM PROJETO.PESSOA";
-
-                SqlDataAdapter adap = new SqlDataAdapter(cmdst, con);
-
-                DataTable ds = new DataTable();
-
-                adap.Fill(ds);
-
-
-
-                List<int> nifs_staff = new List<int>();
-
-                foreach (DataRow dr in ds.Rows)
-                {
-                    nifs_staff.Add(dr.Field<int>("nif"));
-
-                }
-
-                if (con.State == ConnectionState.Open)
-                    con.Close();
-
-                return nifs_staff;
-            }
-
-            catch (Exception pp)
-
-            {
-                System.Windows.Forms.MessageBox.Show("Imposssível conectar!");
-                return null;
-            }
-        }
         const string connectionString = @"Data Source=tcp:mednat.ieeta.pt\\SQLSERVER,8101;Initial Catalog=p5g4; user=p5g4; password=TiagoLucas2000";
         public static Staff Instance
         {
@@ -74,11 +31,14 @@ namespace Trabalho_Final
         }
         public Staff()
         {
+
             InitializeComponent();
+
         }
 
         private void Staff_Load(object sender, EventArgs e)
         {
+
             showStaff("SELECT PROJETO.STAFF.nif,endereco,contacto,idade,nome FROM PROJETO.STAFF JOIN  PROJETO.PESSOA ON PROJETO.PESSOA.NIF=PROJETO.STAFF.NIF");
         }
 
@@ -186,7 +146,7 @@ namespace Trabalho_Final
                 string query = "SELECT PROJETO.STAFF.nif,endereco,contacto,idade,nome FROM PROJETO.STAFF JOIN  PROJETO.PESSOA ON PROJETO.PESSOA.nif=PROJETO.STAFF.nif";
                 showStaff(query);
             }
-                
+
         }
 
         private void Dentista_CheckedChanged(object sender, EventArgs e)
@@ -217,13 +177,44 @@ namespace Trabalho_Final
 
         private void btnAdicionar_Click(object sender, EventArgs e)
         {
+            //Buscar o nif da clinica
+            int nif_clinica;
+            using (SqlConnection SqlConn = new SqlConnection(connectionString))
+            {
+
+                if (SqlConn.State == ConnectionState.Closed)
+                    SqlConn.Open();
+                //--- Pesquisa na BD
+
+                // INSERT 
+                //  @especialidade varchar(35), @numero_ordem int, @nif_clinica int, @nome varchar(100), @contacto int, @nif int, @idade int, @endereco varchar(100), @salario decimal(8, 2), @profissao varchar(100) 
+
+                SqlConnection conn = new SqlConnection(connectionString);
+
+                SqlCommand cmd = new SqlCommand();
+
+                cmd.Connection = conn;
+
+                cmd.CommandType = CommandType.Text;
+                cmd.CommandText = "SELECT PROJETO.get_nif_clinica()";
+                if (SqlConn.State == ConnectionState.Closed)
+                {
+                    SqlConn.Open();
+                    nif_clinica = Int32.Parse(cmd.ExecuteScalar().ToString());
+                    MessageBox.Show("" + nif_clinica);
+                }
+
+
+                if (SqlConn.State == ConnectionState.Open)
+                    SqlConn.Close();
+            }
 
             // VALIDAÇÃO DAS CAIXAS DE TEXTO
             string nome_box = textBox1.Text;
 
             int box_contacto;
             bool sucess = Int32.TryParse(textBox6.Text, out box_contacto);
-            if(!sucess)
+            if (!sucess)
             {
                 MessageBox.Show("Contacto inválido");
                 textBox6.Text = "";
@@ -240,7 +231,7 @@ namespace Trabalho_Final
 
             int box_nif;
             sucess = Int32.TryParse(textBox4.Text, out box_nif);
-            if (!sucess || nifs_staff.Contains(box_nif))
+            if (!sucess)
             {
                 MessageBox.Show("Nif inválido");
                 textBox4.Text = "";
@@ -272,9 +263,39 @@ namespace Trabalho_Final
                 }
             }
 
-            // CRIAR CÓDIGO NECESSÁRIO PARA O INSERT
-            //Inserção da pessoa
-            Boolean inserted = false;
+            string profissao;
+            string especialidade;
+            int numero_ordem;
+
+            if (comboBox1.SelectedIndex > -1)
+            {
+                profissao = comboBox1.Text;
+
+                if (profissao.Equals("DENTISTA"))
+                {
+                    especialidade = textBox8.Text;
+                    sucess = Int32.TryParse(textBox9.Text, out numero_ordem);
+                    if (!sucess)
+                    {
+                        MessageBox.Show("Numero ordem inválido");
+                        return;
+                    }
+                }
+                else
+                {
+                    especialidade = null;
+                    numero_ordem = -99999;
+                }
+            }
+            else
+            {
+                System.Windows.Forms.MessageBox.Show("Selecione uma profissão!");
+                return;
+            }
+
+
+
+            //Inserção da staff
             using (SqlConnection SqlConn = new SqlConnection(connectionString))
             {
                 if (SqlConn.State == ConnectionState.Closed)
@@ -282,72 +303,34 @@ namespace Trabalho_Final
                 //--- Pesquisa na BD
 
                 // INSERT 
+                //, @idade int, @endereco varchar(100), @salario decimal(8,2), @profissao varchar(100) 
 
-                string person_query = "INSERT INTO PROJETO.PESSOA(endereco, contacto, idade, nif, nome) VALUES ('" + box_endereco + "'," + box_contacto + "," + box_idade + "," + box_nif + ",'" + nome_box  + "')";
-                using (SqlCommand cmd = new SqlCommand(person_query, SqlConn))
-                {
-                    int rowsAdded = cmd.ExecuteNonQuery();
+                SqlConnection conn = new SqlConnection(connectionString);
+                string query = "PROJETO.insert_staff";
+                SqlCommand cmd = new SqlCommand(query, conn);
+                cmd.CommandType = CommandType.StoredProcedure;
+                cmd.Parameters.Add("@especialidade", SqlDbType.VarChar).Value = null;
+                cmd.Parameters.Add("@numero_ordem", SqlDbType.Int).Value = numero_ordem;
+                cmd.Parameters.Add("@nome", SqlDbType.VarChar).Value = nome_box;
+                cmd.Parameters.Add("@contacto", SqlDbType.Int).Value = box_contacto;
+                cmd.Parameters.Add("@nif", SqlDbType.Int).Value = box_nif;
+                cmd.Parameters.Add("@idade", SqlDbType.Int).Value = box_idade;
+                cmd.Parameters.Add("@endereco", SqlDbType.VarChar).Value = box_endereco;
+                cmd.Parameters.Add("@salario", SqlDbType.Decimal).Value = box_salario;
+                cmd.Parameters.Add("@profissao", SqlDbType.VarChar).Value = profissao;
 
-                    if (rowsAdded > 0)
-                    {
-                        inserted = true;
-                        System.Windows.Forms.MessageBox.Show("Pessoa adicionada!");
-                    }
-                        
-                    else
-                        System.Windows.Forms.MessageBox.Show("Nao foi possível adicionar pessoa !");
+                SqlParameter returnParameter = cmd.Parameters.Add("@retval", SqlDbType.Int);
+                returnParameter.Direction = ParameterDirection.ReturnValue;
+                conn.Open();
+                cmd.ExecuteNonQuery();
 
-                }
-
-
-                if (SqlConn.State == ConnectionState.Open)
-                    SqlConn.Close();
-            }
-
-            //Buscar o nif da clinica
-            int nif_clinica;
-            using (SqlConnection SqlConn = new SqlConnection(connectionString))
-            {
-
-                if (SqlConn.State == ConnectionState.Closed)
-                    SqlConn.Open();
-                //--- Pesquisa na BD
-                SqlDataAdapter da = new SqlDataAdapter("SELECT nif from PROJETO.CLINICA", SqlConn);
-
-                DataTable ds = new DataTable();
-
-                da.Fill(ds);
-
-                nif_clinica = Convert.ToInt32(ds.Rows[0]["nif"]);
+                int id = (int)returnParameter.Value;
+                MessageBox.Show("" + id);
 
                 if (SqlConn.State == ConnectionState.Open)
                     SqlConn.Close();
             }
-
-            //Inserção da staff
-
-            if (inserted == true)
-            {
-                nifs_staff.Add(box_nif);
-                using (SqlConnection SqlConn = new SqlConnection(connectionString))
-                {
-                    if (SqlConn.State == ConnectionState.Closed)
-                        SqlConn.Open();
-                    //--- Pesquisa na BD
-
-                    // INSERT 
-
-                    string staff_query = "INSERT INTO PROJETO.STAFF(nif, salario, nif_clinica) VALUES (" + box_nif + "," + box_salario + "," + nif_clinica + ")";
-                    using (SqlCommand cmd = new SqlCommand(staff_query, SqlConn))
-                    {
-                        int rowsAdded = cmd.ExecuteNonQuery();
-                    }
-
-
-                    if (SqlConn.State == ConnectionState.Open)
-                        SqlConn.Close();
-                }
-            }
+           
 
             //limpar as text box todas
             textBox1.Text = "";
@@ -356,11 +339,58 @@ namespace Trabalho_Final
             textBox5.Text = "";
             textBox6.Text = "";
             textBox7.Text = "";
+            textBox8.Text = "";
+            textBox9.Text = "";
 
             //fazer load do datagrid de novo
             showStaff("SELECT PROJETO.STAFF.nif,endereco,contacto,idade,nome FROM PROJETO.STAFF JOIN  PROJETO.PESSOA ON PROJETO.PESSOA.NIF=PROJETO.STAFF.NIF");
 
         }
+
+        private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            string profissao;
+            if (comboBox1.SelectedIndex > -1)
+            {
+
+                profissao = comboBox1.Text.Trim();
+
+                if (profissao.Equals("DENTISTA"))
+                {
+
+                    label8.Visible = true;
+                    label9.Visible = true;
+                    label10.Visible = true;
+                    label11.Visible = true;
+                    textBox8.Visible = true;
+                    textBox9.Visible = true;
+
+                }
+                else
+                {
+                    label8.Visible = false;
+                    label9.Visible = false;
+                    label10.Visible = false;
+                    label11.Visible = false;
+                    textBox8.Visible = false;
+                    textBox9.Visible = false;
+                }
+            }
+            else
+            {
+                System.Windows.Forms.MessageBox.Show("Selecione uma profissão!");
+                return;
+            }
+        }
+
+
+
+
+
+
+
+
+
 
         /*
         private void Form1_Resize(object sender, EventArgs e)
