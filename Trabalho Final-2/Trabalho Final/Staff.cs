@@ -211,6 +211,12 @@ namespace Trabalho_Final
 
             // VALIDAÇÃO DAS CAIXAS DE TEXTO
             string nome_box = textBox1.Text;
+            if (nome_box.Length >= 100 || nome_box.Length < 1)
+            {
+                MessageBox.Show("Nome inválido");
+                textBox1.Text = "";
+                return;
+            }
 
             int box_contacto;
             bool sucess = Int32.TryParse(textBox6.Text, out box_contacto);
@@ -239,6 +245,12 @@ namespace Trabalho_Final
             }
 
             string box_endereco = textBox3.Text;
+            if (box_endereco.Length>=100 || box_endereco.Length<1)
+            {
+                MessageBox.Show("Endereço inválido");
+                textBox3.Text = "";
+                return;
+            }
 
             string specifier = "G";
 
@@ -270,7 +282,7 @@ namespace Trabalho_Final
             if (comboBox1.SelectedIndex > -1)
             {
                 profissao = comboBox1.Text;
-
+                MessageBox.Show(profissao);
                 if (profissao.Equals("DENTISTA"))
                 {
                     especialidade = textBox8.Text;
