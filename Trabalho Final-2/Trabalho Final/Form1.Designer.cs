@@ -36,15 +36,14 @@
             this.panel1 = new System.Windows.Forms.Panel();
             this.btnHome = new System.Windows.Forms.Button();
             this.btnPagamento = new System.Windows.Forms.Button();
-            this.button1 = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // btnPacientes
             // 
-            this.btnPacientes.Location = new System.Drawing.Point(9, 10);
-            this.btnPacientes.Margin = new System.Windows.Forms.Padding(2);
+            this.btnPacientes.Location = new System.Drawing.Point(12, 12);
+            this.btnPacientes.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.btnPacientes.Name = "btnPacientes";
-            this.btnPacientes.Size = new System.Drawing.Size(79, 28);
+            this.btnPacientes.Size = new System.Drawing.Size(105, 34);
             this.btnPacientes.TabIndex = 1;
             this.btnPacientes.Text = "Pacientes";
             this.btnPacientes.UseVisualStyleBackColor = true;
@@ -52,10 +51,10 @@
             // 
             // btnStaff
             // 
-            this.btnStaff.Location = new System.Drawing.Point(104, 10);
-            this.btnStaff.Margin = new System.Windows.Forms.Padding(2);
+            this.btnStaff.Location = new System.Drawing.Point(139, 12);
+            this.btnStaff.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.btnStaff.Name = "btnStaff";
-            this.btnStaff.Size = new System.Drawing.Size(79, 28);
+            this.btnStaff.Size = new System.Drawing.Size(105, 34);
             this.btnStaff.TabIndex = 2;
             this.btnStaff.Text = "Staff";
             this.btnStaff.UseVisualStyleBackColor = true;
@@ -63,10 +62,10 @@
             // 
             // btnConsultas
             // 
-            this.btnConsultas.Location = new System.Drawing.Point(198, 10);
-            this.btnConsultas.Margin = new System.Windows.Forms.Padding(2);
+            this.btnConsultas.Location = new System.Drawing.Point(264, 12);
+            this.btnConsultas.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.btnConsultas.Name = "btnConsultas";
-            this.btnConsultas.Size = new System.Drawing.Size(79, 28);
+            this.btnConsultas.Size = new System.Drawing.Size(105, 34);
             this.btnConsultas.TabIndex = 3;
             this.btnConsultas.Text = "Consultas\r\n";
             this.btnConsultas.UseVisualStyleBackColor = true;
@@ -74,10 +73,10 @@
             // 
             // btnFornecedor
             // 
-            this.btnFornecedor.Location = new System.Drawing.Point(290, 10);
-            this.btnFornecedor.Margin = new System.Windows.Forms.Padding(2);
+            this.btnFornecedor.Location = new System.Drawing.Point(387, 12);
+            this.btnFornecedor.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.btnFornecedor.Name = "btnFornecedor";
-            this.btnFornecedor.Size = new System.Drawing.Size(79, 28);
+            this.btnFornecedor.Size = new System.Drawing.Size(105, 34);
             this.btnFornecedor.TabIndex = 4;
             this.btnFornecedor.Text = "Fornecedor";
             this.btnFornecedor.UseVisualStyleBackColor = true;
@@ -91,18 +90,18 @@
             // 
             // panel1
             // 
-            this.panel1.Location = new System.Drawing.Point(9, 46);
-            this.panel1.Margin = new System.Windows.Forms.Padding(2);
+            this.panel1.Location = new System.Drawing.Point(12, 57);
+            this.panel1.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(765, 425);
+            this.panel1.Size = new System.Drawing.Size(1020, 523);
             this.panel1.TabIndex = 5;
             // 
             // btnHome
             // 
-            this.btnHome.Location = new System.Drawing.Point(478, 10);
-            this.btnHome.Margin = new System.Windows.Forms.Padding(2);
+            this.btnHome.Location = new System.Drawing.Point(637, 12);
+            this.btnHome.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.btnHome.Name = "btnHome";
-            this.btnHome.Size = new System.Drawing.Size(79, 28);
+            this.btnHome.Size = new System.Drawing.Size(105, 34);
             this.btnHome.TabIndex = 6;
             this.btnHome.Text = "Home";
             this.btnHome.UseVisualStyleBackColor = true;
@@ -110,31 +109,20 @@
             // 
             // btnPagamento
             // 
-            this.btnPagamento.Location = new System.Drawing.Point(383, 10);
-            this.btnPagamento.Margin = new System.Windows.Forms.Padding(2);
+            this.btnPagamento.Location = new System.Drawing.Point(511, 12);
+            this.btnPagamento.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.btnPagamento.Name = "btnPagamento";
-            this.btnPagamento.Size = new System.Drawing.Size(79, 28);
+            this.btnPagamento.Size = new System.Drawing.Size(105, 34);
             this.btnPagamento.TabIndex = 7;
             this.btnPagamento.Text = "Pagamento";
             this.btnPagamento.UseVisualStyleBackColor = true;
             this.btnPagamento.Click += new System.EventHandler(this.Pagamento_Click);
             // 
-            // button1
-            // 
-            this.button1.Location = new System.Drawing.Point(568, 10);
-            this.button1.Margin = new System.Windows.Forms.Padding(2);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(79, 28);
-            this.button1.TabIndex = 8;
-            this.button1.Text = "Consultas\r\n";
-            this.button1.UseVisualStyleBackColor = true;
-            // 
             // Form1
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(784, 481);
-            this.Controls.Add(this.button1);
+            this.ClientSize = new System.Drawing.Size(1045, 592);
             this.Controls.Add(this.btnPagamento);
             this.Controls.Add(this.btnHome);
             this.Controls.Add(this.panel1);
@@ -142,7 +130,7 @@
             this.Controls.Add(this.btnConsultas);
             this.Controls.Add(this.btnStaff);
             this.Controls.Add(this.btnPacientes);
-            this.Margin = new System.Windows.Forms.Padding(2);
+            this.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.Name = "Form1";
             this.Text = "Form1";
             this.Load += new System.EventHandler(this.Form1_Load);
@@ -159,7 +147,6 @@
         private System.Windows.Forms.Panel panel1;
         private System.Windows.Forms.Button btnHome;
         private System.Windows.Forms.Button btnPagamento;
-        private System.Windows.Forms.Button button1;
     }
 }
 
