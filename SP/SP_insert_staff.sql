@@ -31,10 +31,8 @@ set @nif_clinica = (SELECT PROJETO.get_nif_clinica());
 set @retval = 1;
 -- insert pessoa
 INSERT INTO PROJETO.PESSOA (endereco, contacto, idade, nif, nome) VALUES (@endereco, @contacto, @idade, @nif, @nome)
-return @retval;
 -- insert staff
 INSERT INTO PROJETO.STAFF (nif, salario, nif_clinica) VALUES (@nif, @salario, @nif_clinica)
-return @retval;
 -- insert profissao
 
 IF(@profissao = 'DENTISTA')
