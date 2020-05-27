@@ -1,7 +1,7 @@
 DROP PROC PROJETO.insert_staff;
 declare @retval AS int;
 
-exec PROJETO.insert_staff null, -9, "LUCASSSSS", 234234, 116511111, 21332, adsafasd, 123,  "ASSISTENTE", @retval output
+exec PROJETO.insert_staff null, -9, "LUCASSSSS", 234234, 11651111, 21332, adsafasd, 123,  "ASSISTENTE", @retval output
 
 print @retval
 
