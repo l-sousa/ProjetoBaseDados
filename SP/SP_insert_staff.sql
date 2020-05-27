@@ -1,7 +1,7 @@
 DROP PROC PROJETO.insert_staff;
 declare @retval AS int;
 
-exec PROJETO.insert_staff null, -9, "LUCASSSSS", 234234, 116511111, 21332, adsafasd, 123,  "ASSISTENTE", @retval output
+exec PROJETO.insert_staff null, -9, "LUCASSSSS", 234234, 11651111, 21332, adsafasd, 123,  "ASSISTENTE", @retval output
 
 print @retval
 
@@ -31,10 +31,8 @@ set @nif_clinica = (SELECT PROJETO.get_nif_clinica());
 set @retval = 1;
 -- insert pessoa
 INSERT INTO PROJETO.PESSOA (endereco, contacto, idade, nif, nome) VALUES (@endereco, @contacto, @idade, @nif, @nome)
-return @retval;
 -- insert staff
 INSERT INTO PROJETO.STAFF (nif, salario, nif_clinica) VALUES (@nif, @salario, @nif_clinica)
-return @retval;
 -- insert profissao
 
 IF(@profissao = 'DENTISTA')

@@ -283,7 +283,7 @@ namespace Trabalho_Final
                 }
                 else
                 {
-                    especialidade = null;
+                    especialidade = DBNull.Value.ToString();
                     numero_ordem = -99999;
                 }
             }
@@ -309,28 +309,33 @@ namespace Trabalho_Final
                 string query = "PROJETO.insert_staff";
                 SqlCommand cmd = new SqlCommand(query, conn);
                 cmd.CommandType = CommandType.StoredProcedure;
-                cmd.Parameters.Add("@especialidade", SqlDbType.VarChar).Value = null;
-                cmd.Parameters.Add("@numero_ordem", SqlDbType.Int).Value = numero_ordem;
-                cmd.Parameters.Add("@nome", SqlDbType.VarChar).Value = nome_box;
-                cmd.Parameters.Add("@contacto", SqlDbType.Int).Value = box_contacto;
-                cmd.Parameters.Add("@nif", SqlDbType.Int).Value = box_nif;
-                cmd.Parameters.Add("@idade", SqlDbType.Int).Value = box_idade;
-                cmd.Parameters.Add("@endereco", SqlDbType.VarChar).Value = box_endereco;
-                cmd.Parameters.Add("@salario", SqlDbType.Decimal).Value = box_salario;
-                cmd.Parameters.Add("@profissao", SqlDbType.VarChar).Value = profissao;
-
-                SqlParameter returnParameter = cmd.Parameters.Add("@retval", SqlDbType.Int);
-                returnParameter.Direction = ParameterDirection.ReturnValue;
+                cmd.Parameters.AddWithValue("especialidade", especialidade);
+                cmd.Parameters.AddWithValue("numero_ordem", numero_ordem);
+                cmd.Parameters.AddWithValue("nome", nome_box);
+                cmd.Parameters.AddWithValue("contacto", box_contacto);
+                cmd.Parameters.AddWithValue("nif", box_nif);
+                cmd.Parameters.AddWithValue("idade", box_idade);
+                cmd.Parameters.AddWithValue("endereco", box_endereco);
+                cmd.Parameters.AddWithValue("salario", box_salario);
+                cmd.Parameters.AddWithValue("profissao", profissao);
+                cmd.Parameters.Add("@retval", SqlDbType.Int);
+                cmd.Parameters["@retval"].Direction = ParameterDirection.Output;
                 conn.Open();
                 cmd.ExecuteNonQuery();
+                int retval = (int)cmd.Parameters["@retval"].Value;
+                conn.Close();
 
-                int id = (int)returnParameter.Value;
-                MessageBox.Show("" + id);
+                if(retval != 1)
+                {
+                    MessageBox.Show("Não adicionado!");
+                } else
+                {
+                    MessageBox.Show("Adicionado!");
+                }
 
                 if (SqlConn.State == ConnectionState.Open)
                     SqlConn.Close();
             }
-           
 
             //limpar as text box todas
             textBox1.Text = "";
