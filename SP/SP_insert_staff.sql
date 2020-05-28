@@ -37,24 +37,27 @@ INSERT INTO PROJETO.STAFF (nif, salario, nif_clinica) VALUES (@nif, @salario, @n
 
 IF(@profissao = 'DENTISTA')
 BEGIN
+IF(EXISTS(SELECT numero_ordem FROM PROJETO.DENTISTA WHERE numero_ordem=@numero_ordem))
+BEGIN
+set @retval = 0;
+return @retval;
+END
 INSERT INTO PROJETO.DENTISTA (nif, especialidade, numero_ordem) VALUES (@nif, @especialidade, @numero_ordem)
+set @retval = 1;
 return @retval;
 END
 
 ELSE IF (@profissao = 'ASSISTENTE')
 BEGIN
 INSERT INTO PROJETO.ASSISTENTE (nif) VALUES (@nif)
+set @retval = 1;
 return @retval;
 END
 
-ELSE IF(@profissao = 'RECECCIONISTA')
+ELSE 
 BEGIN 
 INSERT INTO PROJETO.RECECIONISTA (nif) VALUES (@nif)
+set @retval = 1;
 return @retval;
 END
 
-ELSE
-BEGIN
-set @retval = 0;
-return @retval;
-END

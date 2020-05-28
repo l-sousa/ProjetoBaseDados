@@ -553,11 +553,16 @@ namespace Trabalho_Final
                     profissao = comboBox1.Text.Trim();
                     if (profissao.Equals("DENTISTA"))
                     {
-                        especialidade = comboBox2.Text.Trim();
-                        sucess = Int32.TryParse(textBox9.Text, out numero_ordem);
-                        if (!sucess)
+                        especialidade = dataGridView1.SelectedRows[0].Cells["especialidade"].Value.ToString();
+                        comboBox2.SelectedItem = especialidade.ToUpper();
+                        if (textBox9.Text == "")
                         {
-                            MessageBox.Show("Numero ordem inválido");
+                            Int32.TryParse(dataGridView1.SelectedRows[0].Cells["numero_ordem"].Value.ToString(), out numero_ordem);
+                        }
+                        else
+                        {
+                            System.Windows.Forms.MessageBox.Show("O número de ordem não pode ser alterado!");
+                            textBox9.Text = "";
                             return;
                         }
                     }
@@ -630,7 +635,7 @@ namespace Trabalho_Final
             }
             else
             {
-                MessageBox.Show("Tem de selecionar um membro do staff para ser possível removê-lo!");
+                MessageBox.Show("Tem de selecionar um membro do staff para ser possível alterá-lo!");
                 return;
             }
         }

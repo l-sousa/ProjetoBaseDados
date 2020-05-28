@@ -352,14 +352,14 @@ namespace Trabalho_Final
         private void btnAlterar_Click(object sender, EventArgs e)
         {
 
-            if (dataGridView1.SelectedRows.Count == 1)
+            if (dataGridView1.SelectedCells.Count == 1)
             {
-                int codigo = Convert.ToInt32(dataGridView1.SelectedRows[0].Cells["codigo"].Value.ToString());
-                double preco = Double.Parse(dataGridView1.SelectedRows[0].Cells["preco"].Value.ToString());
-                string tipo = dataGridView1.SelectedRows[0].Cells["tipo"].Value.ToString();
-                int duracao = Convert.ToInt32(dataGridView1.SelectedRows[0].Cells["duracao"].Value.ToString());
-                int nif_dentista = Convert.ToInt32(dataGridView1.SelectedRows[0].Cells["nif_dentista"].Value.ToString());
-                string data = dataGridView1.SelectedRows[0].Cells["dataa"].Value.ToString();
+                int codigo = Convert.ToInt32(dataGridView1.CurrentRow.Cells["codigo"].Value.ToString());
+                double preco = Double.Parse(dataGridView1.CurrentRow.Cells["preco"].Value.ToString());
+                string tipo = dataGridView1.CurrentRow.Cells["tipo"].Value.ToString();
+                int duracao = Convert.ToInt32(dataGridView1.CurrentRow.Cells["duracao"].Value.ToString());
+                int nif_dentista = Convert.ToInt32(dataGridView1.CurrentRow.Cells["nif_dentista"].Value.ToString());
+                string data = dataGridView1.CurrentRow.Cells["dataa"].Value.ToString();
                 
                 data = data.Substring(0,data.Length - 8);
                 string[] dataspt = data.Split('/');
@@ -517,9 +517,9 @@ namespace Trabalho_Final
 
             }
 
-            else if(dataGridView1.SelectedRows.Count == 0)
+            else if(dataGridView1.SelectedCells.Count == 0)
             {
-                System.Windows.Forms.MessageBox.Show("Para alterar é preciso selecionar uma consulta!");
+                System.Windows.Forms.MessageBox.Show("Para alterar é preciso selecionar um código de uma consulta!");
                 return;
             }
             else
