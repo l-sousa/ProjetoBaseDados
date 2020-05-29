@@ -8,6 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Data.SqlClient;
+using System.Runtime.InteropServices.WindowsRuntime;
 
 namespace Trabalho_Final
 {
@@ -65,15 +66,24 @@ namespace Trabalho_Final
                     String search = textBox2.Text.Trim();
 
                     SqlConnection conn = new SqlConnection(connectionString);
-                    string query = "PROJETO.procurar_pacientes";
+                    string query = "PROJETO.search_paciente";
                     SqlCommand cmd = new SqlCommand(query, conn);
                     cmd.CommandType = CommandType.StoredProcedure;
-                    cmd.Parameters.AddWithValue("procura",search);
+                    cmd.Parameters.AddWithValue("nome",search);
+                    cmd.Parameters.Add("@retval", SqlDbType.Int);
+                    cmd.Parameters["@retval"].Direction = ParameterDirection.Output;
                     conn.Open();
                     cmd.ExecuteNonQuery();
+                    int retval = (int)cmd.Parameters["@retval"].Value;
                     conn.Close();
-
-
+                    
+                    
+                    if(retval  == 0)
+                    {
+                        MessageBox.Show("Não foi possível filtrar a pesquisa!");
+                        textBox2.Text = "";
+                        return;
+                    }
                     if (SqlConn.State == ConnectionState.Open)
                         SqlConn.Close();
                 }
@@ -98,27 +108,28 @@ namespace Trabalho_Final
 
                 int box_contacto;
                 bool sucess = Int32.TryParse(textBox6.Text, out box_contacto);
-                if (box_contacto.ToString() == "")
+                if (textBox6.Text == "")
                 {
                     Int32.TryParse(dataGridView1.CurrentRow.Cells["contacto"].Value.ToString(), out box_contacto);
                 }
                 else if (!sucess || box_contacto.ToString().Length != 9 || !box_contacto.ToString().StartsWith("91"))
                 {
-                    MessageBox.Show("Contacto inválido");
+                    MessageBox.Show("Contacto inválido!");
                     textBox6.Text = "";
                     return;
                 }
 
                 int box_idade;
                 sucess = Int32.TryParse(textBox5.Text, out box_idade);
-                if (box_idade.ToString() == "")
+                if (textBox5.Text.Trim() == "")
                 {
                     Int32.TryParse(dataGridView1.CurrentRow.Cells["idade"].Value.ToString(), out box_idade);
                 }
-                if (!sucess)
+                else if (!sucess)
                 {
                     MessageBox.Show("Idade inválida");
                     textBox5.Text = "";
+                    return;
                 }
 
                 int box_nif;
@@ -153,7 +164,7 @@ namespace Trabalho_Final
                     //--- Pesquisa na BD
 
                     SqlConnection conn = new SqlConnection(connectionString);
-                    string query = "PROJETO.update_pacientes";
+                    string query = "PROJETO.update_paciente";
                     SqlCommand cmd = new SqlCommand(query, conn);
                     cmd.CommandType = CommandType.StoredProcedure;
                     cmd.Parameters.AddWithValue("nome", nome_box);
@@ -168,33 +179,30 @@ namespace Trabalho_Final
                     int retval = (int)cmd.Parameters["@retval"].Value;
                     conn.Close();
 
-                    /* Mudar o return
-                    if (retval == -1)
+                    if (retval == 0)
                     {
-                        MessageBox.Show("Nif já existente!");
+                        MessageBox.Show("Não foi possível alterar!");
+                        textBox1.Text = "";
                         textBox4.Text = "";
-                        return;
-                    }
-                    else if (retval == 0)
-                    {
-                        MessageBox.Show("Número da ordem ja existente!");
-                        textBox9.Text = "";
+                        textBox5.Text = "";
+                        textBox6.Text = "";
                         return;
                     }
                     else
                     {
-                        MessageBox.Show("Adicionado!");
-                        label8.Visible = false;
-                        label9.Visible = false;
-                        label10.Visible = false;
-                        label11.Visible = false;
-                        textBox9.Visible = false;
-                        comboBox2.Visible = false;
-                    }*/
+                        MessageBox.Show("Paciente alterado!");
+                        textBox1.Text = "";
+                        textBox4.Text = "";
+                        textBox5.Text = "";
+                        textBox6.Text = "";
+                    }
 
                     if (SqlConn.State == ConnectionState.Open)
                         SqlConn.Close();
                 }
+
+                //Load do datagrid de novo
+                showPacientes("SELECT PROJETO.PESSOA.nif,endereco,contacto,idade,nome FROM PROJETO.PACIENTE JOIN PROJETO.PESSOA ON PROJETO.PACIENTE.NIF = PROJETO.PESSOA.NIF");
 
             }
             else
@@ -261,6 +269,7 @@ namespace Trabalho_Final
             {
                 MessageBox.Show("Idade inválida");
                 textBox5.Text = "";
+                return;
             }
 
             int box_nif;
@@ -288,7 +297,6 @@ namespace Trabalho_Final
                 //--- Pesquisa na BD
 
                 // INSERT 
-                //, @idade int, @endereco varchar(100), @salario decimal(8,2), @profissao varchar(100) 
 
                 SqlConnection conn = new SqlConnection(connectionString);
                 string query = "PROJETO.insert_paciente";
@@ -306,30 +314,28 @@ namespace Trabalho_Final
                 int retval = (int)cmd.Parameters["@retval"].Value;
                 conn.Close();
 
-                /*
                 if (retval == -1)
                 {
                     MessageBox.Show("Nif já existente!");
                     textBox4.Text = "";
                     return;
                 }
-                else if (retval == 0)
-                {
-                    MessageBox.Show("Número da ordem ja existente!");
-                    textBox9.Text = "";
+                else if(retval == 0){
+                    MessageBox.Show("Nao foi possível inserir paciente!");
+                    textBox1.Text = "";
+                    textBox4.Text = "";
+                    textBox5.Text = "";
+                    textBox6.Text = "";
                     return;
                 }
                 else
                 {
                     MessageBox.Show("Adicionado!");
-                    label8.Visible = false;
-                    label9.Visible = false;
-                    label10.Visible = false;
-                    label11.Visible = false;
-                    textBox9.Visible = false;
-                    comboBox2.Visible = false;
+                    textBox1.Text = "";
+                    textBox4.Text = "";
+                    textBox5.Text = "";
+                    textBox6.Text = "";
                 }
-                */
 
                 if (SqlConn.State == ConnectionState.Open)
                     SqlConn.Close();
@@ -374,20 +380,21 @@ namespace Trabalho_Final
 
             double box_desconto;
             success = Double.TryParse(textBox8.Text, out box_desconto);
-            if (success && box_desconto.ToString().IndexOf(".") != -1)
+
+            if (success && box_desconto.ToString().IndexOf(',') != -1)
             {
-                if ((box_desconto.ToString().Length > 6 || textBox8.Text == "") && (box_desconto.ToString().Substring(box_desconto.ToString().IndexOf('.'))).Length - 1 > 2)
+                if ((box_desconto.ToString().Length > 6 || textBox8.Text == "") && (box_desconto.ToString().Substring(box_desconto.ToString().IndexOf(','))).Length - 1 > 2)
                 {
-                    System.Windows.Forms.MessageBox.Show("O campo \"desconto\" deve ter no máximo tamanho 6!");
+                    System.Windows.Forms.MessageBox.Show("O campo \"desconto\" deve ter no máximo tamanho 5 em que 2 tem de ser decimais!");
                     textBox8.Text = "";
                     return;
                 }
             }
             else
             {
-                if (box_desconto.ToString().Length > 6 || textBox8.Text == "")
+                if (box_desconto.ToString().Length > 5 || textBox8.Text == "")
                 {
-                    System.Windows.Forms.MessageBox.Show("O campo \"desconto\" deve ter no máximo tamanho 5 em que 2 tem de ser decimais!");
+                    System.Windows.Forms.MessageBox.Show("O campo \"desconto\" deve ter no máximo tamanho 5!");
                     textBox8.Text = "";
                     return;
                 }
@@ -404,11 +411,11 @@ namespace Trabalho_Final
                 // INSERT 
 
                 SqlConnection conn = new SqlConnection(connectionString);
-                string query = "PROJETO.insert_checkdentista";
+                string query = "PROJETO.insert_check_dentista";
                 SqlCommand cmd = new SqlCommand(query, conn);
                 cmd.CommandType = CommandType.StoredProcedure;
                 cmd.Parameters.AddWithValue("codigo", box_codigo);
-                cmd.Parameters.AddWithValue("desconto", box_desconto);
+                cmd.Parameters.AddWithValue("valor", box_desconto);
                 cmd.Parameters.AddWithValue("validade", box_validade);
                 cmd.Parameters.Add("@retval", SqlDbType.Int);
                 cmd.Parameters["@retval"].Direction = ParameterDirection.Output;
@@ -417,30 +424,25 @@ namespace Trabalho_Final
                 int retval = (int)cmd.Parameters["@retval"].Value;
                 conn.Close();
 
-                /*
                 if (retval == -1)
                 {
-                    MessageBox.Show("Nif já existente!");
-                    textBox4.Text = "";
+                    MessageBox.Show("Código já existente!");
+                    textBox7.Text = "";
                     return;
                 }
                 else if (retval == 0)
                 {
-                    MessageBox.Show("Número da ordem ja existente!");
+                    MessageBox.Show("Não foi possível adicionar cheque!");
                     textBox9.Text = "";
                     return;
                 }
                 else
                 {
-                    MessageBox.Show("Adicionado!");
-                    label8.Visible = false;
-                    label9.Visible = false;
-                    label10.Visible = false;
-                    label11.Visible = false;
-                    textBox9.Visible = false;
-                    comboBox2.Visible = false;
+                    MessageBox.Show("Cheque dentista adicionado!");
+                    textBox7.Text = "";
+                    textBox8.Text = "";
+                    textBox9.Text = "";
                 }
-                */
 
                 if (SqlConn.State == ConnectionState.Open)
                     SqlConn.Close();
