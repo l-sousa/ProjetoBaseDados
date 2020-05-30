@@ -454,6 +454,48 @@ namespace Trabalho_Final
             textBox9.Text = "";
         }
 
+        private void btnApagar_Click(object sender, EventArgs e)
+        {
+            if (dataGridView1.SelectedRows.Count == 1)
+            {
+                using (SqlConnection SqlConn = new SqlConnection(connectionString))
+                {
+                    if (SqlConn.State == ConnectionState.Closed)
+                        SqlConn.Open();
+                    //--- Pesquisa na BD
+
+                    int nif;
+                    bool success = Int32.TryParse(dataGridView1.SelectedRows[0].Cells["nif"].Value.ToString(), out nif);
+                    if (!success)
+                    {
+                        System.Windows.Forms.MessageBox.Show("Não foi possível obter valor do 'nif'!");
+                        return;
+                    }
+
+                    SqlConnection conn = new SqlConnection(connectionString);
+                    string query = "PROJETO.remove_paciente";
+                    SqlCommand cmd = new SqlCommand(query, conn);
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    cmd.Parameters.AddWithValue("nif", nif);
+                    conn.Open();
+                    cmd.ExecuteNonQuery();
+                    conn.Close();
+
+
+                    if (SqlConn.State == ConnectionState.Open)
+                        SqlConn.Close();
+                }
+
+                MessageBox.Show("Paciente eliminado com sucesso!");
+
+            }
+            else
+            {
+                MessageBox.Show("Tem de selecionar um paciente para ser possível removê-lo!");
+                return;
+            }
+        }
+
         /*
         private void Form1_Resize(object sender, EventArgs e)
         {
