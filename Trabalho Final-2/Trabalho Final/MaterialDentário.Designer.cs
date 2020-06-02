@@ -40,10 +40,10 @@
             // 
             // btnProcurar
             // 
-            this.btnProcurar.Location = new System.Drawing.Point(244, 24);
-            this.btnProcurar.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.btnProcurar.Location = new System.Drawing.Point(325, 30);
+            this.btnProcurar.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.btnProcurar.Name = "btnProcurar";
-            this.btnProcurar.Size = new System.Drawing.Size(75, 24);
+            this.btnProcurar.Size = new System.Drawing.Size(100, 30);
             this.btnProcurar.TabIndex = 76;
             this.btnProcurar.Text = "Procurar";
             this.btnProcurar.UseVisualStyleBackColor = true;
@@ -52,39 +52,40 @@
             // textBox2
             // 
             this.textBox2.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.8F);
-            this.textBox2.Location = new System.Drawing.Point(323, 24);
-            this.textBox2.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.textBox2.Location = new System.Drawing.Point(431, 30);
+            this.textBox2.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.textBox2.Name = "textBox2";
-            this.textBox2.Size = new System.Drawing.Size(192, 24);
+            this.textBox2.Size = new System.Drawing.Size(255, 28);
             this.textBox2.TabIndex = 75;
             // 
             // dataGridView1
             // 
             this.dataGridView1.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.dataGridView1.Location = new System.Drawing.Point(2, 66);
-            this.dataGridView1.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.dataGridView1.Location = new System.Drawing.Point(3, 81);
+            this.dataGridView1.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.dataGridView1.Name = "dataGridView1";
             this.dataGridView1.RowHeadersWidth = 51;
             this.dataGridView1.RowTemplate.Height = 24;
-            this.dataGridView1.Size = new System.Drawing.Size(763, 267);
+            this.dataGridView1.Size = new System.Drawing.Size(1017, 329);
             this.dataGridView1.TabIndex = 74;
             // 
             // btnApagar
             // 
-            this.btnApagar.Location = new System.Drawing.Point(642, 372);
-            this.btnApagar.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.btnApagar.Location = new System.Drawing.Point(856, 458);
+            this.btnApagar.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.btnApagar.Name = "btnApagar";
-            this.btnApagar.Size = new System.Drawing.Size(75, 23);
+            this.btnApagar.Size = new System.Drawing.Size(100, 28);
             this.btnApagar.TabIndex = 73;
             this.btnApagar.Text = "Apagar";
             this.btnApagar.UseVisualStyleBackColor = true;
+            this.btnApagar.Click += new System.EventHandler(this.btnApagar_Click);
             // 
             // btnAdicionar
             // 
-            this.btnAdicionar.Location = new System.Drawing.Point(244, 372);
-            this.btnAdicionar.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.btnAdicionar.Location = new System.Drawing.Point(325, 458);
+            this.btnAdicionar.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.btnAdicionar.Name = "btnAdicionar";
-            this.btnAdicionar.Size = new System.Drawing.Size(75, 25);
+            this.btnAdicionar.Size = new System.Drawing.Size(100, 31);
             this.btnAdicionar.TabIndex = 71;
             this.btnAdicionar.Text = "Adicionar";
             this.btnAdicionar.UseVisualStyleBackColor = true;
@@ -93,24 +94,23 @@
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(320, 359);
-            this.label1.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
+            this.label1.Location = new System.Drawing.Point(427, 442);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(35, 13);
+            this.label1.Size = new System.Drawing.Size(45, 17);
             this.label1.TabIndex = 66;
             this.label1.Text = "Nome";
             // 
             // textBox1
             // 
-            this.textBox1.Location = new System.Drawing.Point(323, 375);
-            this.textBox1.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.textBox1.Location = new System.Drawing.Point(431, 462);
+            this.textBox1.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.textBox1.Name = "textBox1";
-            this.textBox1.Size = new System.Drawing.Size(192, 20);
+            this.textBox1.Size = new System.Drawing.Size(255, 22);
             this.textBox1.TabIndex = 61;
             // 
             // MaterialDentário
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.Controls.Add(this.btnProcurar);
             this.Controls.Add(this.textBox2);
@@ -119,10 +119,10 @@
             this.Controls.Add(this.btnAdicionar);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.textBox1);
-            this.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.Name = "MaterialDentário";
-            this.Size = new System.Drawing.Size(765, 425);
-            this.Load += new System.EventHandler(this.Fornecedor_Load);
+            this.Size = new System.Drawing.Size(1020, 523);
+            this.Load += new System.EventHandler(this.Material_Load);
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();

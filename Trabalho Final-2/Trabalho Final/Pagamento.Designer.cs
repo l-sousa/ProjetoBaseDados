@@ -73,6 +73,7 @@
             this.Procurar.TabIndex = 2;
             this.Procurar.Text = "Procurar";
             this.Procurar.UseVisualStyleBackColor = true;
+            this.Procurar.Click += new System.EventHandler(this.Procurar_Click);
             // 
             // textBox2
             // 

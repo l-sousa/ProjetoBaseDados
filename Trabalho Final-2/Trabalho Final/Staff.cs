@@ -177,38 +177,6 @@ namespace Trabalho_Final
 
         private void btnAdicionar_Click(object sender, EventArgs e)
         {
-            //Buscar o nif da clinica
-            int nif_clinica;
-            using (SqlConnection SqlConn = new SqlConnection(connectionString))
-            {
-
-                if (SqlConn.State == ConnectionState.Closed)
-                    SqlConn.Open();
-                //--- Pesquisa na BD
-
-                // INSERT 
-                //  @especialidade varchar(35), @numero_ordem int, @nif_clinica int, @nome varchar(100), @contacto int, @nif int, @idade int, @endereco varchar(100), @salario decimal(8, 2), @profissao varchar(100) 
-
-                SqlConnection conn = new SqlConnection(connectionString);
-
-                SqlCommand cmd = new SqlCommand();
-
-                cmd.Connection = conn;
-
-                cmd.CommandType = CommandType.Text;
-                cmd.CommandText = "SELECT PROJETO.get_nif_clinica()";
-                if (SqlConn.State == ConnectionState.Closed)
-                {
-                    SqlConn.Open();
-                    nif_clinica = Int32.Parse(cmd.ExecuteScalar().ToString());
-                    MessageBox.Show("" + nif_clinica);
-                }
-
-
-                if (SqlConn.State == ConnectionState.Open)
-                    SqlConn.Close();
-            }
-
             // VALIDAÇÃO DAS CAIXAS DE TEXTO
             string nome_box = textBox1.Text;
             if (nome_box.Length >= 100 || nome_box.Length < 1)
@@ -302,8 +270,6 @@ namespace Trabalho_Final
                 System.Windows.Forms.MessageBox.Show("Selecione uma profissão!");
                 return;
             }
-
-            MessageBox.Show(numero_ordem.ToString());
 
             //Inserção da staff
             using (SqlConnection SqlConn = new SqlConnection(connectionString))
@@ -604,17 +570,38 @@ namespace Trabalho_Final
                     int retval = (int)cmd.Parameters["@retval"].Value;
                     conn.Close();
 
-                    /* Mudar o return
                     if (retval == -1)
                     {
-                        MessageBox.Show("Nif já existente!");
-                        textBox4.Text = "";
+                        MessageBox.Show("Profissão não coincide com o membro da staff selecionado!");
+                        comboBox1.Text = "";
+                        comboBox2.Text = "";
+                        label8.Visible = false;
+                        label9.Visible = false;
+                        label10.Visible = false;
+                        label11.Visible = false;
+                        textBox9.Visible = false;
+                        comboBox2.Visible = false;
+                        textBox9.Text = "";
                         return;
                     }
                     else if (retval == 0)
                     {
-                        MessageBox.Show("Número da ordem ja existente!");
+                        MessageBox.Show("Não foi possível alterar!");
+                        textBox1.Text = "";
+                        textBox3.Text = "";
+                        textBox4.Text = "";
+                        textBox5.Text = "";
+                        textBox6.Text = "";
+                        textBox7.Text = "";
                         textBox9.Text = "";
+                        comboBox1.Text = "";
+                        comboBox2.Text = "";
+                        label8.Visible = false;
+                        label9.Visible = false;
+                        label10.Visible = false;
+                        label11.Visible = false;
+                        textBox9.Visible = false;
+                        comboBox2.Visible = false;
                         return;
                     }
                     else
@@ -626,7 +613,16 @@ namespace Trabalho_Final
                         label11.Visible = false;
                         textBox9.Visible = false;
                         comboBox2.Visible = false;
-                    }*/
+                        textBox1.Text = "";
+                        textBox3.Text = "";
+                        textBox4.Text = "";
+                        textBox5.Text = "";
+                        textBox6.Text = "";
+                        textBox7.Text = "";
+                        textBox9.Text = "";
+                        comboBox1.Text = "";
+                        comboBox2.Text = "";
+                    }
 
                     if (SqlConn.State == ConnectionState.Open)
                         SqlConn.Close();

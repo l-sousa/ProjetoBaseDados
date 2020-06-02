@@ -57,36 +57,20 @@ namespace Trabalho_Final
 
         private void btnProcurar_Click(object sender, EventArgs e)
         {
-                using (SqlConnection SqlConn = new SqlConnection(connectionString))
-                {
-                    if (SqlConn.State == ConnectionState.Closed)
-                        SqlConn.Open();
-                    //--- Pesquisa na BD
+            string search = textBox2.Text.Trim();
 
-                    String search = textBox2.Text.Trim();
+            //TODO pesquisa dinamica por exemplo */*/2022 devolve todas as consultas de 2022
+            if (search == "")
+            {
+                    showPacientes("SELECT PROJETO.PESSOA.nif,endereco,contacto,idade,nome FROM PROJETO.PACIENTE JOIN PROJETO.PESSOA ON PROJETO.PACIENTE.NIF = PROJETO.PESSOA.NIF");
+                    return;
+             }    
+            else
+            {
 
-                    SqlConnection conn = new SqlConnection(connectionString);
-                    string query = "PROJETO.search_paciente";
-                    SqlCommand cmd = new SqlCommand(query, conn);
-                    cmd.CommandType = CommandType.StoredProcedure;
-                    cmd.Parameters.AddWithValue("nome",search);
-                    cmd.Parameters.Add("@retval", SqlDbType.Int);
-                    cmd.Parameters["@retval"].Direction = ParameterDirection.Output;
-                    conn.Open();
-                    cmd.ExecuteNonQuery();
-                    int retval = (int)cmd.Parameters["@retval"].Value;
-                    conn.Close();
-                    
-                    
-                    if(retval  == 0)
-                    {
-                        MessageBox.Show("Não foi possível filtrar a pesquisa!");
-                        textBox2.Text = "";
-                        return;
-                    }
-                    if (SqlConn.State == ConnectionState.Open)
-                        SqlConn.Close();
-                }
+                    showPacientes("SELECT PROJETO.PESSOA.nif,endereco,contacto,idade,nome FROM PROJETO.PACIENTE JOIN PROJETO.PESSOA ON PROJETO.PACIENTE.NIF = PROJETO.PESSOA.NIF WHERE PROJETO.PESSOA.NOME LIKE \'%" + search + "%\'");
+                    return;
+            }
 
         }
 
@@ -203,7 +187,10 @@ namespace Trabalho_Final
 
                 //Load do datagrid de novo
                 showPacientes("SELECT PROJETO.PESSOA.nif,endereco,contacto,idade,nome FROM PROJETO.PACIENTE JOIN PROJETO.PESSOA ON PROJETO.PACIENTE.NIF = PROJETO.PESSOA.NIF");
-
+                textBox1.Text = "";
+                textBox4.Text = "";
+                textBox5.Text = "";
+                textBox6.Text = "";
             }
             else
             {

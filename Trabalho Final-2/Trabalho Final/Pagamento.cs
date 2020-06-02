@@ -97,31 +97,62 @@ namespace Trabalho_Final
                 conn.Close();
 
 
-                /*
                 if (retval == -1)
                 {
-                    MessageBox.Show("Nif já existente!");
+                    MessageBox.Show("Nif do paciente não existe!");
+                    textBox2.Text = "";
+                    return;
+                }
+                else if(retval == -2)
+                {
+                    MessageBox.Show("Nif do rececionista não existe!");
+                    textBox3.Text = "";
+                    return;
+                }
+                else if(retval == -3)
+                {
+                    MessageBox.Show("Consulta não existe!");
                     textBox4.Text = "";
+                    return;
+                }
+                else if (retval == -4)
+                {
+                    MessageBox.Show("Cheque dentista não existe!");
+                    textBox5.Text = "";
+                    return;
+                }
+                else if(retval == -5)
+                {
+                    MessageBox.Show("Consulta já foi paga!");
+                    textBox2.Text = "";
+                    textBox3.Text = "";
+                    textBox4.Text = "";
+                    textBox5.Text = "";
+                    return;
+                }
+                else if(retval == -6)
+                {
+                    MessageBox.Show("Cheque dentista já foi utilizado!");
+                    textBox5.Text = "";
                     return;
                 }
                 else if (retval == 0)
                 {
                     MessageBox.Show("Nao foi possível inserir paciente!");
-                    textBox1.Text = "";
+                    textBox2.Text = "";
+                    textBox3.Text = "";
                     textBox4.Text = "";
                     textBox5.Text = "";
-                    textBox6.Text = "";
                     return;
                 }
                 else
                 {
                     MessageBox.Show("Adicionado!");
                     textBox2.Text = "";
+                    textBox3.Text = "";
                     textBox4.Text = "";
-                    textBox5.Text = "";
-                    textBox6.Text = "";
+                    textBox4.Text = "";
                 }
-                */
 
                 if (SqlConn.State == ConnectionState.Open)
                     SqlConn.Close();
@@ -183,10 +214,7 @@ namespace Trabalho_Final
                     string query = "PROJETO.remove_pagamento";
                     SqlCommand cmd = new SqlCommand(query, conn);
                     cmd.CommandType = CommandType.StoredProcedure;
-                    cmd.Parameters.AddWithValue("nif_paciente", paciente);
-                    cmd.Parameters.AddWithValue("nif_rececionista", rececionista);
                     cmd.Parameters.AddWithValue("codigo_consulta", codigo);
-                    cmd.Parameters.AddWithValue("codigo_check", cheque);
                     cmd.Parameters.Add("@retval", SqlDbType.Int);
                     cmd.Parameters["@retval"].Direction = ParameterDirection.Output;
                     conn.Open();
@@ -194,17 +222,50 @@ namespace Trabalho_Final
                     int retval = (int)cmd.Parameters["@retval"].Value;
                     conn.Close();
 
+                    if (retval == 0)
+                    {
+                        MessageBox.Show("Não foi possível remover!");
+                        textBox2.Text = "";
+                        textBox3.Text = "";
+                        textBox4.Text = "";
+                        textBox5.Text = "";
+                        return;
+                    }
+                    else
+                    {
+                        MessageBox.Show("Pagamento removido!");
+                        textBox2.Text = "";
+                        textBox3.Text = "";
+                        textBox4.Text = "";
+                        textBox5.Text = "";
+                    }
 
                     if (SqlConn.State == ConnectionState.Open)
                         SqlConn.Close();
                 }
 
-                MessageBox.Show("Pagamento eliminado com sucesso!");
-
             }
             else
             {
                 MessageBox.Show("Tem de selecionar um pagamento para ser possível removê-lo!");
+                return;
+            }
+        }
+
+        private void Procurar_Click(object sender, EventArgs e)
+        {
+            string search = textBox1.Text.Trim();
+
+            //TODO pesquisa dinamica por exemplo */*/2022 devolve todas as consultas de 2022
+            if (search == "")
+            {
+                showPagamentos("SELECT * FROM PROJETO.PAGA");
+                return;
+            }
+            else
+            {
+
+                showPagamentos("SELECT * FROM PROJETO.PAGA WHERE codigo_consulta=" + search + ";");
                 return;
             }
         }
