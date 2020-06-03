@@ -78,7 +78,7 @@
             this.btnFornecedor.Name = "btnFornecedor";
             this.btnFornecedor.Size = new System.Drawing.Size(105, 34);
             this.btnFornecedor.TabIndex = 4;
-            this.btnFornecedor.Text = "Fornecedor";
+            this.btnFornecedor.Text = "Material";
             this.btnFornecedor.UseVisualStyleBackColor = true;
             this.btnFornecedor.Click += new System.EventHandler(this.btnFornecedor_Click);
             // 

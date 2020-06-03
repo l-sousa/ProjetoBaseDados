@@ -17,9 +17,9 @@ namespace Trabalho_Final
 
     public partial class Staff : UserControl
     {
+        private DataTable dt = new DataTable();
+        SqlConnection sqlcon = new SqlConnection(@"Data Source=tcp:mednat.ieeta.pt\\SQLSERVER,8101;Initial Catalog=p5g4; user=p5g4; password=TiagoLucas2000");
         private static Staff _instance;
-
-        const string connectionString = @"Data Source=tcp:mednat.ieeta.pt\\SQLSERVER,8101;Initial Catalog=p5g4; user=p5g4; password=TiagoLucas2000";
         public static Staff Instance
         {
             get
@@ -31,52 +31,60 @@ namespace Trabalho_Final
         }
         public Staff()
         {
-
             InitializeComponent();
 
         }
 
         private void Staff_Load(object sender, EventArgs e)
         {
-
-            showStaff("SELECT PROJETO.STAFF.nif,endereco,contacto,idade,nome FROM PROJETO.STAFF JOIN  PROJETO.PESSOA ON PROJETO.PESSOA.NIF=PROJETO.STAFF.NIF");
-        }
-
-        private void showStaff(string query)
-        {
-            using (SqlConnection SqlConn = new SqlConnection(connectionString))
-            {
-
-                if (SqlConn.State == ConnectionState.Closed)
-                    SqlConn.Open();
-                //--- Pesquisa na BD
-                SqlDataAdapter da = new SqlDataAdapter(query, SqlConn);
-                //--- Converte resultado para uma Tabela
-                DataTable dt = new DataTable();
-                da.Fill(dt);
-                //--- Preenche o DataGrid com a Tabela
-                dataGridView1.DataSource = dt;
-                if (SqlConn.State == ConnectionState.Open)
-                    SqlConn.Close();
-            }
+            dataGridView1.DataSource = dt;
+            sqlcon.Open();
+            SqlCommand cmd1 = sqlcon.CreateCommand();
+            cmd1.CommandType = CommandType.Text;
+            cmd1.CommandText = "SELECT PROJETO.STAFF.nif,endereco,contacto,idade,nome FROM PROJETO.STAFF JOIN  PROJETO.PESSOA ON PROJETO.PESSOA.NIF=PROJETO.STAFF.NIF";
+            cmd1.ExecuteNonQuery();
+            SqlDataAdapter da = new SqlDataAdapter(cmd1);
+            dt.Clear();
+            da.Fill(dt);
+            sqlcon.Close();
         }
 
 
         private void btnProcurar_Click(object sender, EventArgs e)
         {
-            string query;
+            dataGridView1.DataSource = dt;
             string search = textBox2.Text.Trim();
             if (Todos.Checked)
             {
                 if (search == "")
                 {
-                    query = "SELECT PROJETO.STAFF.nif,endereco,contacto,idade,nome FROM PROJETO.STAFF JOIN  PROJETO.PESSOA ON PROJETO.PESSOA.nif=PROJETO.STAFF.nif";
-                    showStaff(query);
+                    sqlcon.Open();
+                    SqlCommand cmd1 = sqlcon.CreateCommand();
+                    cmd1.CommandType = CommandType.Text;
+                    cmd1.CommandText = "SELECT PROJETO.STAFF.nif,endereco,contacto,idade,nome FROM PROJETO.STAFF JOIN  PROJETO.PESSOA ON PROJETO.PESSOA.NIF=PROJETO.STAFF.NIF";
+                    cmd1.ExecuteNonQuery();
+                    SqlDataAdapter da = new SqlDataAdapter(cmd1);
+                    dt.Clear();
+                    da.Fill(dt);
+                    sqlcon.Close();
                 }
                 else
                 {
-                    query = "SELECT PROJETO.STAFF.nif,endereco,contacto,idade,nome FROM PROJETO.STAFF JOIN PROJETO.PESSOA ON PROJETO.PESSOA.nif = PROJETO.STAFF.nif WHERE nome LIKE \'%" + search + "%\'";
-                    showStaff(query);
+                    sqlcon.Open();
+                    SqlCommand cmd1 = sqlcon.CreateCommand();
+                    cmd1.CommandType = CommandType.Text;
+                    cmd1.CommandText = "SELECT PROJETO.STAFF.nif,endereco,contacto,idade,nome FROM PROJETO.STAFF JOIN PROJETO.PESSOA ON PROJETO.PESSOA.nif = PROJETO.STAFF.nif WHERE nome LIKE @search";
+                    SqlParameter p = new SqlParameter("@search", SqlDbType.Char, 255)
+                    {
+                        Value = "%" + search + "%"
+                    };
+                    cmd1.Parameters.AddWithValue("search", search);
+                    cmd1.ExecuteNonQuery();
+                    SqlDataAdapter da = new SqlDataAdapter(cmd1);
+                    dt.Clear();
+                    da.Fill(dt);
+                    sqlcon.Close();
+
                     textBox2.Text = "";
                 }
             }
@@ -84,13 +92,33 @@ namespace Trabalho_Final
             {
                 if (search == "")
                 {
-                    query = "SELECT PROJETO.STAFF.nif,endereco,contacto,idade,nome,especialidade,numero_ordem FROM PROJETO.STAFF JOIN  PROJETO.PESSOA ON PROJETO.PESSOA.nif=PROJETO.STAFF.nif JOIN PROJETO.DENTISTA ON PROJETO.STAFF.nif=PROJETO.DENTISTA.nif";
-                    showStaff(query);
+                    sqlcon.Open();
+                    SqlCommand cmd1 = sqlcon.CreateCommand();
+                    cmd1.CommandType = CommandType.Text;
+                    cmd1.CommandText = "SELECT PROJETO.STAFF.nif,endereco,contacto,idade,nome,especialidade,numero_ordem FROM PROJETO.STAFF JOIN  PROJETO.PESSOA ON PROJETO.PESSOA.nif=PROJETO.STAFF.nif JOIN PROJETO.DENTISTA ON PROJETO.STAFF.nif=PROJETO.DENTISTA.nif";
+                    cmd1.ExecuteNonQuery();
+                    SqlDataAdapter da = new SqlDataAdapter(cmd1);
+                    dt.Clear();
+                    da.Fill(dt);
+                    sqlcon.Close();
                 }
                 else
                 {
-                    query = "SELECT PROJETO.STAFF.nif,endereco,contacto,idade,nome,especialidade,numero_ordem FROM PROJETO.STAFF JOIN  PROJETO.PESSOA ON PROJETO.PESSOA.nif=PROJETO.STAFF.nif JOIN PROJETO.DENTISTA ON PROJETO.STAFF.nif=PROJETO.DENTISTA.nif WHERE nome LIKE \'%" + search + "%\'";
-                    showStaff(query);
+                    sqlcon.Open();
+                    SqlCommand cmd1 = sqlcon.CreateCommand();
+                    cmd1.CommandType = CommandType.Text;
+                    cmd1.CommandText = "SELECT PROJETO.STAFF.nif,endereco,contacto,idade,nome,especialidade,numero_ordem FROM PROJETO.STAFF JOIN  PROJETO.PESSOA ON PROJETO.PESSOA.nif=PROJETO.STAFF.nif JOIN PROJETO.DENTISTA ON PROJETO.STAFF.nif=PROJETO.DENTISTA.nif WHERE nome LIKE @search";
+                    SqlParameter p = new SqlParameter("@search", SqlDbType.Char, 255)
+                    {
+                        Value = "%" + search + "%"
+                    };
+                    cmd1.Parameters.AddWithValue("search", search);
+                    cmd1.ExecuteNonQuery();
+                    SqlDataAdapter da = new SqlDataAdapter(cmd1);
+                    dt.Clear();
+                    da.Fill(dt);
+                    sqlcon.Close();
+
                     textBox2.Text = "";
                 }
             }
@@ -98,13 +126,33 @@ namespace Trabalho_Final
             {
                 if (search == "")
                 {
-                    query = "SELECT PROJETO.STAFF.nif,endereco,contacto,idade,nome FROM PROJETO.STAFF JOIN  PROJETO.PESSOA ON PROJETO.PESSOA.nif=PROJETO.STAFF.nif JOIN PROJETO.RECECIONISTA ON PROJETO.STAFF.nif=PROJETO.RECECIONISTA.nif";
-                    showStaff(query);
+                    sqlcon.Open();
+                    SqlCommand cmd1 = sqlcon.CreateCommand();
+                    cmd1.CommandType = CommandType.Text;
+                    cmd1.CommandText = "SELECT PROJETO.STAFF.nif,endereco,contacto,idade,nome FROM PROJETO.STAFF JOIN  PROJETO.PESSOA ON PROJETO.PESSOA.nif=PROJETO.STAFF.nif JOIN PROJETO.RECECIONISTA ON PROJETO.STAFF.nif=PROJETO.RECECIONISTA.nif";
+                    cmd1.ExecuteNonQuery();
+                    SqlDataAdapter da = new SqlDataAdapter(cmd1);
+                    dt.Clear();
+                    da.Fill(dt);
+                    sqlcon.Close();
                 }
                 else
                 {
-                    query = "SELECT PROJETO.STAFF.nif,endereco,contacto,idade,nome FROM PROJETO.STAFF JOIN  PROJETO.PESSOA ON PROJETO.PESSOA.nif=PROJETO.STAFF.nif JOIN PROJETO.RECECIONISTA ON PROJETO.STAFF.nif=PROJETO.RECECIONISTA.nif WHERE nome LIKE \'%" + search + "%\'";
-                    showStaff(query);
+                    sqlcon.Open();
+                    SqlCommand cmd1 = sqlcon.CreateCommand();
+                    cmd1.CommandType = CommandType.Text;
+                    cmd1.CommandText = "SELECT PROJETO.STAFF.nif,endereco,contacto,idade,nome FROM PROJETO.STAFF JOIN  PROJETO.PESSOA ON PROJETO.PESSOA.nif=PROJETO.STAFF.nif JOIN PROJETO.RECECIONISTA ON PROJETO.STAFF.nif=PROJETO.RECECIONISTA.nif WHERE nome LIKE @search";
+                    SqlParameter p = new SqlParameter("@search", SqlDbType.Char, 255)
+                    {
+                        Value = "%" + search + "%"
+                    };
+                    cmd1.Parameters.AddWithValue("search", search);
+                    cmd1.ExecuteNonQuery();
+                    SqlDataAdapter da = new SqlDataAdapter(cmd1);
+                    dt.Clear();
+                    da.Fill(dt);
+                    sqlcon.Close();
+
                     textBox2.Text = "";
                 }
             }
@@ -112,13 +160,33 @@ namespace Trabalho_Final
             {
                 if (search == "")
                 {
-                    query = "SELECT PROJETO.STAFF.nif,endereco,contacto,idade,nome FROM PROJETO.STAFF JOIN  PROJETO.PESSOA ON PROJETO.PESSOA.nif=PROJETO.STAFF.nif JOIN PROJETO.ASSISTENTE ON PROJETO.STAFF.nif=PROJETO.ASSISTENTE.nif";
-                    showStaff(query);
+                    sqlcon.Open();
+                    SqlCommand cmd1 = sqlcon.CreateCommand();
+                    cmd1.CommandType = CommandType.Text;
+                    cmd1.CommandText = "SELECT PROJETO.STAFF.nif,endereco,contacto,idade,nome FROM PROJETO.STAFF JOIN  PROJETO.PESSOA ON PROJETO.PESSOA.nif=PROJETO.STAFF.nif JOIN PROJETO.ASSISTENTE ON PROJETO.STAFF.nif=PROJETO.ASSISTENTE.nif";
+                    cmd1.ExecuteNonQuery();
+                    SqlDataAdapter da = new SqlDataAdapter(cmd1);
+                    dt.Clear();
+                    da.Fill(dt);
+                    sqlcon.Close();
                 }
                 else
                 {
-                    query = "SELECT PROJETO.STAFF.nif,endereco,contacto,idade,nome FROM PROJETO.STAFF JOIN  PROJETO.PESSOA ON PROJETO.PESSOA.nif=PROJETO.STAFF.nif JOIN PROJETO.ASSISTENTE ON PROJETO.STAFF.nif=PROJETO.ASSISTENTE.nif WHERE nome LIKE \'%" + search + "%\'";
-                    showStaff(query);
+                    sqlcon.Open();
+                    SqlCommand cmd1 = sqlcon.CreateCommand();
+                    cmd1.CommandType = CommandType.Text;
+                    cmd1.CommandText = "SELECT PROJETO.STAFF.nif,endereco,contacto,idade,nome FROM PROJETO.STAFF JOIN  PROJETO.PESSOA ON PROJETO.PESSOA.nif=PROJETO.STAFF.nif JOIN PROJETO.ASSISTENTE ON PROJETO.STAFF.nif=PROJETO.ASSISTENTE.nif WHERE nome LIKE @search";
+                    SqlParameter p = new SqlParameter("@search", SqlDbType.Char, 255)
+                    {
+                        Value = "%" + search + "%"
+                    };
+                    cmd1.Parameters.AddWithValue("search", search);
+                    cmd1.ExecuteNonQuery();
+                    SqlDataAdapter da = new SqlDataAdapter(cmd1);
+                    dt.Clear();
+                    da.Fill(dt);
+                    sqlcon.Close();
+
                     textBox2.Text = "";
                 }
             }
@@ -126,13 +194,33 @@ namespace Trabalho_Final
             {
                 if (search == "")
                 {
-                    query = "SELECT PROJETO.STAFF.nif,endereco,contacto,idade,nome FROM PROJETO.STAFF JOIN  PROJETO.PESSOA ON PROJETO.PESSOA.nif=PROJETO.STAFF.nif";
-                    showStaff(query);
+                    sqlcon.Open();
+                    SqlCommand cmd1 = sqlcon.CreateCommand();
+                    cmd1.CommandType = CommandType.Text;
+                    cmd1.CommandText = "SELECT PROJETO.STAFF.nif,endereco,contacto,idade,nome FROM PROJETO.STAFF JOIN  PROJETO.PESSOA ON PROJETO.PESSOA.nif=PROJETO.STAFF.nif";
+                    cmd1.ExecuteNonQuery();
+                    SqlDataAdapter da = new SqlDataAdapter(cmd1);
+                    dt.Clear();
+                    da.Fill(dt);
+                    sqlcon.Close();
                 }
                 else
                 {
-                    query = "SELECT PROJETO.STAFF.nif,endereco,contacto,idade,nome FROM PROJETO.STAFF JOIN PROJETO.PESSOA ON PROJETO.PESSOA.nif = PROJETO.STAFF.nif WHERE nome LIKE \'%" + search + "%\'";
-                    showStaff(query);
+                    sqlcon.Open();
+                    SqlCommand cmd1 = sqlcon.CreateCommand();
+                    cmd1.CommandType = CommandType.Text;
+                    cmd1.CommandText = "SELECT PROJETO.STAFF.nif,endereco,contacto,idade,nome FROM PROJETO.STAFF JOIN PROJETO.PESSOA ON PROJETO.PESSOA.nif = PROJETO.STAFF.nif WHERE nome LIKE @search";
+                    SqlParameter p = new SqlParameter("@search", SqlDbType.Char, 255)
+                    {
+                        Value = "%" + search + "%"
+                    };
+                    cmd1.Parameters.AddWithValue("search", search);
+                    cmd1.ExecuteNonQuery();
+                    SqlDataAdapter da = new SqlDataAdapter(cmd1);
+                    dt.Clear();
+                    da.Fill(dt);
+                    sqlcon.Close();
+
                     textBox2.Text = "";
                 }
             }
@@ -141,42 +229,75 @@ namespace Trabalho_Final
 
         private void Filtro_Todos(object sender, EventArgs e)
         {
+            dataGridView1.DataSource = dt;
             if (Todos.Checked)
             {
-                string query = "SELECT PROJETO.STAFF.nif,endereco,contacto,idade,nome FROM PROJETO.STAFF JOIN  PROJETO.PESSOA ON PROJETO.PESSOA.nif=PROJETO.STAFF.nif";
-                showStaff(query);
+                sqlcon.Open();
+                SqlCommand cmd1 = sqlcon.CreateCommand();
+                cmd1.CommandType = CommandType.Text;
+                cmd1.CommandText = "SELECT PROJETO.STAFF.nif,endereco,contacto,idade,nome FROM PROJETO.STAFF JOIN  PROJETO.PESSOA ON PROJETO.PESSOA.nif=PROJETO.STAFF.nif";
+                cmd1.ExecuteNonQuery();
+                SqlDataAdapter da = new SqlDataAdapter(cmd1);
+                dt.Clear();
+                da.Fill(dt);
+                sqlcon.Close();
             }
 
         }
 
         private void Dentista_CheckedChanged(object sender, EventArgs e)
         {
+            dataGridView1.DataSource = dt;
             if (Dentista.Checked)
             {
-                string query = "SELECT PROJETO.STAFF.nif,endereco,contacto,idade,nome,especialidade,numero_ordem FROM PROJETO.STAFF JOIN  PROJETO.PESSOA ON PROJETO.PESSOA.nif=PROJETO.STAFF.nif JOIN PROJETO.DENTISTA ON PROJETO.STAFF.nif=PROJETO.DENTISTA.nif";
-                showStaff(query);
+                sqlcon.Open();
+                SqlCommand cmd1 = sqlcon.CreateCommand();
+                cmd1.CommandType = CommandType.Text;
+                cmd1.CommandText = "SELECT PROJETO.STAFF.nif,endereco,contacto,idade,nome,especialidade,numero_ordem FROM PROJETO.STAFF JOIN  PROJETO.PESSOA ON PROJETO.PESSOA.nif=PROJETO.STAFF.nif JOIN PROJETO.DENTISTA ON PROJETO.STAFF.nif=PROJETO.DENTISTA.nif";
+                cmd1.ExecuteNonQuery();
+                SqlDataAdapter da = new SqlDataAdapter(cmd1);
+                dt.Clear();
+                da.Fill(dt);
+                sqlcon.Close();
             }
         }
         private void Assistente_CheckedChanged(object sender, EventArgs e)
         {
+            dataGridView1.DataSource = dt;
             if (Assistente.Checked)
             {
-                string query = "SELECT PROJETO.STAFF.nif,endereco,contacto,idade,nome FROM PROJETO.STAFF JOIN  PROJETO.PESSOA ON PROJETO.PESSOA.nif=PROJETO.STAFF.nif JOIN PROJETO.ASSISTENTE ON PROJETO.STAFF.nif=PROJETO.ASSISTENTE.nif";
-                showStaff(query);
+                sqlcon.Open();
+                SqlCommand cmd1 = sqlcon.CreateCommand();
+                cmd1.CommandType = CommandType.Text;
+                cmd1.CommandText = "SELECT PROJETO.STAFF.nif,endereco,contacto,idade,nome FROM PROJETO.STAFF JOIN  PROJETO.PESSOA ON PROJETO.PESSOA.nif=PROJETO.STAFF.nif JOIN PROJETO.ASSISTENTE ON PROJETO.STAFF.nif=PROJETO.ASSISTENTE.nif";
+                cmd1.ExecuteNonQuery();
+                SqlDataAdapter da = new SqlDataAdapter(cmd1);
+                dt.Clear();
+                da.Fill(dt);
+                sqlcon.Close();
             }
         }
 
         private void Rececionista_CheckedChanged(object sender, EventArgs e)
         {
+            dataGridView1.DataSource = dt;
             if (Rececionista.Checked)
             {
-                string query = "SELECT PROJETO.STAFF.nif,endereco,contacto,idade,nome FROM PROJETO.STAFF JOIN  PROJETO.PESSOA ON PROJETO.PESSOA.nif=PROJETO.STAFF.nif JOIN PROJETO.RECECIONISTA ON PROJETO.STAFF.nif=PROJETO.RECECIONISTA.nif";
-                showStaff(query);
+                sqlcon.Open();
+                SqlCommand cmd1 = sqlcon.CreateCommand();
+                cmd1.CommandType = CommandType.Text;
+                cmd1.CommandText = "SELECT PROJETO.STAFF.nif,endereco,contacto,idade,nome FROM PROJETO.STAFF JOIN  PROJETO.PESSOA ON PROJETO.PESSOA.nif=PROJETO.STAFF.nif JOIN PROJETO.RECECIONISTA ON PROJETO.STAFF.nif=PROJETO.RECECIONISTA.nif";
+                cmd1.ExecuteNonQuery();
+                SqlDataAdapter da = new SqlDataAdapter(cmd1);
+                dt.Clear();
+                da.Fill(dt);
+                sqlcon.Close();
             }
         }
 
         private void btnAdicionar_Click(object sender, EventArgs e)
         {
+            dataGridView1.DataSource = dt;
             // VALIDAÇÃO DAS CAIXAS DE TEXTO
             string nome_box = textBox1.Text;
             if (nome_box.Length >= 100 || nome_box.Length < 1)
@@ -271,61 +392,49 @@ namespace Trabalho_Final
                 return;
             }
 
-            //Inserção da staff
-            using (SqlConnection SqlConn = new SqlConnection(connectionString))
+
+            // INSERT  
+
+            string query = "PROJETO.insert_staff";
+            SqlCommand cmd = new SqlCommand(query, sqlcon);
+            cmd.CommandType = CommandType.StoredProcedure;
+            cmd.Parameters.AddWithValue("especialidade", especialidade);
+            cmd.Parameters.AddWithValue("numero_ordem", numero_ordem);
+            cmd.Parameters.AddWithValue("nome", nome_box);
+            cmd.Parameters.AddWithValue("contacto", box_contacto);
+            cmd.Parameters.AddWithValue("nif", box_nif);
+            cmd.Parameters.AddWithValue("idade", box_idade);
+            cmd.Parameters.AddWithValue("endereco", box_endereco);
+            cmd.Parameters.AddWithValue("salario", box_salario);
+            cmd.Parameters.AddWithValue("profissao", profissao);
+            cmd.Parameters.Add("@retval", SqlDbType.Int);
+            cmd.Parameters["@retval"].Direction = ParameterDirection.Output;
+            sqlcon.Open();
+            cmd.ExecuteNonQuery();
+            int retval = (int)cmd.Parameters["@retval"].Value;
+            sqlcon.Close();
+
+            if(retval == -1)
             {
-                if (SqlConn.State == ConnectionState.Closed)
-                    SqlConn.Open();
-                //--- Pesquisa na BD
-
-                // INSERT 
-                //, @idade int, @endereco varchar(100), @salario decimal(8,2), @profissao varchar(100) 
-
-                SqlConnection conn = new SqlConnection(connectionString);
-                string query = "PROJETO.insert_staff";
-                SqlCommand cmd = new SqlCommand(query, conn);
-                cmd.CommandType = CommandType.StoredProcedure;
-                cmd.Parameters.AddWithValue("especialidade", especialidade);
-                cmd.Parameters.AddWithValue("numero_ordem", numero_ordem);
-                cmd.Parameters.AddWithValue("nome", nome_box);
-                cmd.Parameters.AddWithValue("contacto", box_contacto);
-                cmd.Parameters.AddWithValue("nif", box_nif);
-                cmd.Parameters.AddWithValue("idade", box_idade);
-                cmd.Parameters.AddWithValue("endereco", box_endereco);
-                cmd.Parameters.AddWithValue("salario", box_salario);
-                cmd.Parameters.AddWithValue("profissao", profissao);
-                cmd.Parameters.Add("@retval", SqlDbType.Int);
-                cmd.Parameters["@retval"].Direction = ParameterDirection.Output;
-                conn.Open();
-                cmd.ExecuteNonQuery();
-                int retval = (int)cmd.Parameters["@retval"].Value;
-                conn.Close();
-
-                if(retval == -1)
-                {
-                    MessageBox.Show("Nif já existente!");
-                    textBox4.Text = "";
-                    return;
-                }
-                else if(retval == 0)
-                {
-                    MessageBox.Show("Número da ordem ja existente!");
-                    textBox9.Text = "";
-                    return;
-                }
-                else
-                {
-                    MessageBox.Show("Adicionado!");
-                    label8.Visible = false;
-                    label9.Visible = false;
-                    label10.Visible = false;
-                    label11.Visible = false;
-                    textBox9.Visible = false;
-                    comboBox2.Visible = false;
-                }
-
-                if (SqlConn.State == ConnectionState.Open)
-                    SqlConn.Close();
+                MessageBox.Show("Nif já existente!");
+                textBox4.Text = "";
+                return;
+            }
+            else if(retval == 0)
+            {
+                MessageBox.Show("Número da ordem ja existente!");
+                textBox9.Text = "";
+                return;
+            }
+            else
+            {
+                MessageBox.Show("Adicionado!");
+                label8.Visible = false;
+                label9.Visible = false;
+                label10.Visible = false;
+                label11.Visible = false;
+                textBox9.Visible = false;
+                comboBox2.Visible = false;
             }
 
             //limpar as text box todas
@@ -338,12 +447,21 @@ namespace Trabalho_Final
             textBox9.Text = "";
 
             //fazer load do datagrid de novo
-            showStaff("SELECT PROJETO.STAFF.nif,endereco,contacto,idade,nome FROM PROJETO.STAFF JOIN  PROJETO.PESSOA ON PROJETO.PESSOA.NIF=PROJETO.STAFF.NIF");
+            sqlcon.Open();
+            SqlCommand cmd1 = sqlcon.CreateCommand();
+            cmd1.CommandType = CommandType.Text;
+            cmd1.CommandText = "SELECT PROJETO.STAFF.nif,endereco,contacto,idade,nome FROM PROJETO.STAFF JOIN  PROJETO.PESSOA ON PROJETO.PESSOA.NIF=PROJETO.STAFF.NIF";
+            cmd1.ExecuteNonQuery();
+            SqlDataAdapter da = new SqlDataAdapter(cmd1);
+            dt.Clear();
+            da.Fill(dt);
+            sqlcon.Close();
 
         }
 
         private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
         {
+            dataGridView1.DataSource = dt;
             string profissao;
             if (comboBox1.SelectedIndex > -1)
             {
@@ -380,35 +498,29 @@ namespace Trabalho_Final
 
         private void btnApagar_Click(object sender, EventArgs e)
         {
-            if (dataGridView1.SelectedRows.Count == 1)
+            dataGridView1.DataSource = dt;
+            if (dataGridView1.SelectedCells.Count == 1)
             {
-                using (SqlConnection SqlConn = new SqlConnection(connectionString))
+                int nif;
+                bool success = Int32.TryParse(dataGridView1.CurrentRow.Cells["nif"].Value.ToString(), out nif);
+                if (!success)
                 {
-                    if (SqlConn.State == ConnectionState.Closed)
-                        SqlConn.Open();
-                    //--- Pesquisa na BD
-
-                    int nif;
-                    bool success = Int32.TryParse(dataGridView1.SelectedRows[0].Cells["nif"].Value.ToString(), out nif);
-                    if (!success)
-                    {
-                        System.Windows.Forms.MessageBox.Show("Não foi possível obter valor de 'código'!");
-                        return;
-                    }
-
-                    SqlConnection conn = new SqlConnection(connectionString);
-                    string query = "PROJETO.remove_staff";
-                    SqlCommand cmd = new SqlCommand(query, conn);
-                    cmd.CommandType = CommandType.StoredProcedure;
-                    cmd.Parameters.AddWithValue("nif", nif);
-                    conn.Open();
-                    cmd.ExecuteNonQuery();
-                    conn.Close();
-
-
-                    if (SqlConn.State == ConnectionState.Open)
-                        SqlConn.Close();
+                    System.Windows.Forms.MessageBox.Show("Não foi possível obter valor de 'código'!");
+                    return;
                 }
+
+                string query = "PROJETO.remove_staff";
+                SqlCommand cmd = new SqlCommand(query, sqlcon);
+                cmd.CommandType = CommandType.StoredProcedure;
+                cmd.Parameters.AddWithValue("nif", nif);
+                cmd.Parameters.Add("@retval", SqlDbType.Int);
+                cmd.Parameters["@retval"].Direction = ParameterDirection.Output;
+                sqlcon.Open();
+                cmd.ExecuteNonQuery();
+                int retval = (int)cmd.Parameters["@retval"].Value;
+                sqlcon.Close();
+
+                
 
                 MessageBox.Show("Pessoa do staff eliminada com sucesso!");
 
@@ -422,12 +534,13 @@ namespace Trabalho_Final
 
         private void btnAlterar_Click(object sender, EventArgs e)
         {
-            if (dataGridView1.SelectedRows.Count == 1)
+            dataGridView1.DataSource = dt;
+            if (dataGridView1.SelectedCells.Count == 1)
             {
                 string nome_box = textBox1.Text;
                 if(nome_box == "")
                 {
-                    nome_box = dataGridView1.SelectedRows[0].Cells["nome"].Value.ToString();
+                    nome_box = dataGridView1.CurrentRow.Cells["nome"].Value.ToString();
                 }
                 else if(nome_box.Length >= 100 || nome_box.Length < 1)
                 {
@@ -440,7 +553,7 @@ namespace Trabalho_Final
                 bool sucess = Int32.TryParse(textBox6.Text, out box_contacto);
                 if (box_contacto.ToString() == "")
                 {
-                    Int32.TryParse(dataGridView1.SelectedRows[0].Cells["contacto"].Value.ToString(),out box_contacto);
+                    Int32.TryParse(dataGridView1.CurrentRow.Cells["contacto"].Value.ToString(),out box_contacto);
                 }
                 else if (!sucess || box_contacto.ToString().Length != 9 || !box_contacto.ToString().StartsWith("91"))
                 {
@@ -453,7 +566,7 @@ namespace Trabalho_Final
                 sucess = Int32.TryParse(textBox5.Text, out box_idade);
                 if (box_idade.ToString() == "")
                 {
-                    Int32.TryParse(dataGridView1.SelectedRows[0].Cells["idade"].Value.ToString(), out box_idade);
+                    Int32.TryParse(dataGridView1.CurrentRow.Cells["idade"].Value.ToString(), out box_idade);
                 }
                 if (!sucess)
                 {
@@ -464,7 +577,7 @@ namespace Trabalho_Final
                 int box_nif;
                 if(textBox4.Text == "")
                 {
-                    Int32.TryParse(dataGridView1.SelectedRows[0].Cells["nif"].Value.ToString(), out box_nif);
+                    Int32.TryParse(dataGridView1.CurrentRow.Cells["nif"].Value.ToString(), out box_nif);
                 }
                 else
                 {
@@ -475,7 +588,7 @@ namespace Trabalho_Final
                 string box_endereco = textBox3.Text;
                 if (box_endereco.ToString() == "")
                 {
-                    box_endereco = dataGridView1.SelectedRows[0].Cells["endereco"].Value.ToString();
+                    box_endereco = dataGridView1.CurrentRow.Cells["endereco"].Value.ToString();
                 }
                 else if (box_endereco.Length >= 100 || box_endereco.Length < 1)
                 {
@@ -488,7 +601,7 @@ namespace Trabalho_Final
                 sucess = Double.TryParse(textBox7.Text, out box_salario);
                 if (box_salario.ToString() == "")
                 {
-                    Double.TryParse(dataGridView1.SelectedRows[0].Cells["salario"].Value.ToString(), out box_salario);
+                    Double.TryParse(dataGridView1.CurrentRow.Cells["salario"].Value.ToString(), out box_salario);
                 }
                 else if (sucess && box_salario.ToString().IndexOf(".") != -1)
                 {
@@ -519,11 +632,11 @@ namespace Trabalho_Final
                     profissao = comboBox1.Text.Trim();
                     if (profissao.Equals("DENTISTA"))
                     {
-                        especialidade = dataGridView1.SelectedRows[0].Cells["especialidade"].Value.ToString();
+                        especialidade = dataGridView1.CurrentRow.Cells["especialidade"].Value.ToString();
                         comboBox2.SelectedItem = especialidade.ToUpper();
                         if (textBox9.Text == "")
                         {
-                            Int32.TryParse(dataGridView1.SelectedRows[0].Cells["numero_ordem"].Value.ToString(), out numero_ordem);
+                            Int32.TryParse(dataGridView1.CurrentRow.Cells["numero_ordem"].Value.ToString(), out numero_ordem);
                         }
                         else
                         {
@@ -544,90 +657,89 @@ namespace Trabalho_Final
                     return;
                 }
 
-                using (SqlConnection SqlConn = new SqlConnection(connectionString))
+                string query = "PROJETO.update_staff";
+                SqlCommand cmd = new SqlCommand(query, sqlcon);
+                cmd.CommandType = CommandType.StoredProcedure;
+                cmd.Parameters.AddWithValue("especialidade", especialidade);
+                cmd.Parameters.AddWithValue("numero_ordem", numero_ordem);
+                cmd.Parameters.AddWithValue("nome", nome_box);
+                cmd.Parameters.AddWithValue("contacto", box_contacto);
+                cmd.Parameters.AddWithValue("nif", box_nif);
+                cmd.Parameters.AddWithValue("idade", box_idade);
+                cmd.Parameters.AddWithValue("endereco", box_endereco);
+                cmd.Parameters.AddWithValue("salario", box_salario);
+                cmd.Parameters.AddWithValue("profissao", profissao);
+                cmd.Parameters.Add("@retval", SqlDbType.Int);
+                cmd.Parameters["@retval"].Direction = ParameterDirection.Output;
+                sqlcon.Open();
+                cmd.ExecuteNonQuery();
+                int retval = (int)cmd.Parameters["@retval"].Value;
+                sqlcon.Close();
+
+                if (retval == -1)
                 {
-                    if (SqlConn.State == ConnectionState.Closed)
-                        SqlConn.Open();
-                    //--- Pesquisa na BD
-
-                    SqlConnection conn = new SqlConnection(connectionString);
-                    string query = "PROJETO.update_staff";
-                    SqlCommand cmd = new SqlCommand(query, conn);
-                    cmd.CommandType = CommandType.StoredProcedure;
-                    cmd.Parameters.AddWithValue("especialidade", especialidade);
-                    cmd.Parameters.AddWithValue("numero_ordem", numero_ordem);
-                    cmd.Parameters.AddWithValue("nome", nome_box);
-                    cmd.Parameters.AddWithValue("contacto", box_contacto);
-                    cmd.Parameters.AddWithValue("nif", box_nif);
-                    cmd.Parameters.AddWithValue("idade", box_idade);
-                    cmd.Parameters.AddWithValue("endereco", box_endereco);
-                    cmd.Parameters.AddWithValue("salario", box_salario);
-                    cmd.Parameters.AddWithValue("profissao", profissao);
-                    cmd.Parameters.Add("@retval", SqlDbType.Int);
-                    cmd.Parameters["@retval"].Direction = ParameterDirection.Output;
-                    conn.Open();
-                    cmd.ExecuteNonQuery();
-                    int retval = (int)cmd.Parameters["@retval"].Value;
-                    conn.Close();
-
-                    if (retval == -1)
-                    {
-                        MessageBox.Show("Profissão não coincide com o membro da staff selecionado!");
-                        comboBox1.Text = "";
-                        comboBox2.Text = "";
-                        label8.Visible = false;
-                        label9.Visible = false;
-                        label10.Visible = false;
-                        label11.Visible = false;
-                        textBox9.Visible = false;
-                        comboBox2.Visible = false;
-                        textBox9.Text = "";
-                        return;
-                    }
-                    else if (retval == 0)
-                    {
-                        MessageBox.Show("Não foi possível alterar!");
-                        textBox1.Text = "";
-                        textBox3.Text = "";
-                        textBox4.Text = "";
-                        textBox5.Text = "";
-                        textBox6.Text = "";
-                        textBox7.Text = "";
-                        textBox9.Text = "";
-                        comboBox1.Text = "";
-                        comboBox2.Text = "";
-                        label8.Visible = false;
-                        label9.Visible = false;
-                        label10.Visible = false;
-                        label11.Visible = false;
-                        textBox9.Visible = false;
-                        comboBox2.Visible = false;
-                        return;
-                    }
-                    else
-                    {
-                        MessageBox.Show("Adicionado!");
-                        label8.Visible = false;
-                        label9.Visible = false;
-                        label10.Visible = false;
-                        label11.Visible = false;
-                        textBox9.Visible = false;
-                        comboBox2.Visible = false;
-                        textBox1.Text = "";
-                        textBox3.Text = "";
-                        textBox4.Text = "";
-                        textBox5.Text = "";
-                        textBox6.Text = "";
-                        textBox7.Text = "";
-                        textBox9.Text = "";
-                        comboBox1.Text = "";
-                        comboBox2.Text = "";
-                    }
-
-                    if (SqlConn.State == ConnectionState.Open)
-                        SqlConn.Close();
+                    MessageBox.Show("Profissão não coincide com o membro da staff selecionado!");
+                    comboBox1.Text = "";
+                    comboBox2.Text = "";
+                    label8.Visible = false;
+                    label9.Visible = false;
+                    label10.Visible = false;
+                    label11.Visible = false;
+                    textBox9.Visible = false;
+                    comboBox2.Visible = false;
+                    textBox9.Text = "";
+                    return;
+                }
+                else if (retval == 0)
+                {
+                    MessageBox.Show("Não foi possível alterar!");
+                    textBox1.Text = "";
+                    textBox3.Text = "";
+                    textBox4.Text = "";
+                    textBox5.Text = "";
+                    textBox6.Text = "";
+                    textBox7.Text = "";
+                    textBox9.Text = "";
+                    comboBox1.Text = "";
+                    comboBox2.Text = "";
+                    label8.Visible = false;
+                    label9.Visible = false;
+                    label10.Visible = false;
+                    label11.Visible = false;
+                    textBox9.Visible = false;
+                    comboBox2.Visible = false;
+                    return;
+                }
+                else
+                {
+                    MessageBox.Show("Adicionado!");
+                    label8.Visible = false;
+                    label9.Visible = false;
+                    label10.Visible = false;
+                    label11.Visible = false;
+                    textBox9.Visible = false;
+                    comboBox2.Visible = false;
+                    textBox1.Text = "";
+                    textBox3.Text = "";
+                    textBox4.Text = "";
+                    textBox5.Text = "";
+                    textBox6.Text = "";
+                    textBox7.Text = "";
+                    textBox9.Text = "";
+                    comboBox1.Text = "";
+                    comboBox2.Text = "";
                 }
 
+                //fazer load do datagrid de novo
+                sqlcon.Open();
+                SqlCommand cmd1 = sqlcon.CreateCommand();
+                cmd1.CommandType = CommandType.Text;
+                cmd1.CommandText = "SELECT PROJETO.STAFF.nif,endereco,contacto,idade,nome FROM PROJETO.STAFF JOIN  PROJETO.PESSOA ON PROJETO.PESSOA.NIF=PROJETO.STAFF.NIF";
+                cmd1.ExecuteNonQuery();
+                SqlDataAdapter da = new SqlDataAdapter(cmd1);
+                dt.Clear();
+                da.Fill(dt);
+                sqlcon.Close();
             }
             else
             {

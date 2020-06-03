@@ -14,7 +14,8 @@ namespace Trabalho_Final
 {
     public partial class Pacientes : UserControl
     {
-        const string connectionString = @"Data Source=tcp:mednat.ieeta.pt\\SQLSERVER,8101;Initial Catalog=p5g4; user=p5g4; password=TiagoLucas2000";
+        private DataTable dt = new DataTable();
+        SqlConnection sqlcon = new SqlConnection(@"Data Source=tcp:mednat.ieeta.pt\\SQLSERVER,8101;Initial Catalog=p5g4; user=p5g4; password=TiagoLucas2000");
 
         private static Pacientes _instance;
         public static Pacientes Instance
@@ -33,49 +34,62 @@ namespace Trabalho_Final
 
         private void Pacientes_Load(object sender, EventArgs e)
         {
-            showPacientes("SELECT PROJETO.PESSOA.nif,endereco,contacto,idade,nome FROM PROJETO.PACIENTE JOIN PROJETO.PESSOA ON PROJETO.PACIENTE.NIF = PROJETO.PESSOA.NIF");
-        }
-
-        private void showPacientes(string query)
-        {
-            using (SqlConnection SqlConn = new SqlConnection(connectionString))
-            {
-
-                if (SqlConn.State == ConnectionState.Closed)
-                    SqlConn.Open();
-                //--- Pesquisa na BD
-                SqlDataAdapter da = new SqlDataAdapter(query, SqlConn);
-                //--- Converte resultado para uma Tabela
-                DataTable dt = new DataTable();
-                da.Fill(dt);
-                //--- Preenche o DataGrid com a Tabela
-                dataGridView1.DataSource = dt;
-                if (SqlConn.State == ConnectionState.Open)
-                    SqlConn.Close();
-            }
+            dataGridView1.DataSource = dt;
+            sqlcon.Open();
+            SqlCommand cmd1 = sqlcon.CreateCommand();
+            cmd1.CommandType = CommandType.Text;
+            cmd1.CommandText = "SELECT PROJETO.PESSOA.nif,endereco,contacto,idade,nome FROM PROJETO.PACIENTE JOIN PROJETO.PESSOA ON PROJETO.PACIENTE.NIF = PROJETO.PESSOA.NIF";
+            cmd1.ExecuteNonQuery();
+            SqlDataAdapter da = new SqlDataAdapter(cmd1);
+            dt.Clear();
+            da.Fill(dt);
+            sqlcon.Close();
         }
 
         private void btnProcurar_Click(object sender, EventArgs e)
         {
+            dataGridView1.DataSource = dt;
             string search = textBox2.Text.Trim();
 
             //TODO pesquisa dinamica por exemplo */*/2022 devolve todas as consultas de 2022
             if (search == "")
             {
-                    showPacientes("SELECT PROJETO.PESSOA.nif,endereco,contacto,idade,nome FROM PROJETO.PACIENTE JOIN PROJETO.PESSOA ON PROJETO.PACIENTE.NIF = PROJETO.PESSOA.NIF");
-                    return;
+                sqlcon.Open();
+                SqlCommand cmd1 = sqlcon.CreateCommand();
+                cmd1.CommandType = CommandType.Text;
+                cmd1.CommandText = "SELECT PROJETO.PESSOA.nif,endereco,contacto,idade,nome FROM PROJETO.PACIENTE JOIN PROJETO.PESSOA ON PROJETO.PACIENTE.NIF = PROJETO.PESSOA.NIF";
+                cmd1.ExecuteNonQuery();
+                SqlDataAdapter da = new SqlDataAdapter(cmd1);
+                dt.Clear();
+                da.Fill(dt);
+                sqlcon.Close();
+                return;
              }    
             else
             {
 
-                    showPacientes("SELECT PROJETO.PESSOA.nif,endereco,contacto,idade,nome FROM PROJETO.PACIENTE JOIN PROJETO.PESSOA ON PROJETO.PACIENTE.NIF = PROJETO.PESSOA.NIF WHERE PROJETO.PESSOA.NOME LIKE \'%" + search + "%\'");
-                    return;
+                sqlcon.Open();
+                SqlCommand cmd1 = sqlcon.CreateCommand();
+                cmd1.CommandType = CommandType.Text;
+                cmd1.CommandText = "SELECT PROJETO.PESSOA.nif,endereco,contacto,idade,nome FROM PROJETO.PACIENTE JOIN PROJETO.PESSOA ON PROJETO.PACIENTE.NIF = PROJETO.PESSOA.NIF WHERE PROJETO.PESSOA.NOME LIKE @search";
+                SqlParameter p = new SqlParameter("@search", SqlDbType.Char, 255)
+                {
+                    Value = "%" + search + "%"
+                };
+                cmd1.Parameters.AddWithValue("search", search);
+                cmd1.ExecuteNonQuery();
+                SqlDataAdapter da = new SqlDataAdapter(cmd1);
+                dt.Clear();
+                da.Fill(dt);
+                sqlcon.Close();
+                return;
             }
 
         }
 
         private void btnAlterar_Click(object sender, EventArgs e)
         {
+            dataGridView1.DataSource = dt;
             if (dataGridView1.SelectedCells.Count == 1)
             {
                 string nome_box = textBox1.Text;
@@ -96,7 +110,7 @@ namespace Trabalho_Final
                 {
                     Int32.TryParse(dataGridView1.CurrentRow.Cells["contacto"].Value.ToString(), out box_contacto);
                 }
-                else if (!sucess || box_contacto.ToString().Length != 9 || !box_contacto.ToString().StartsWith("91"))
+                else if (!sucess || box_contacto.ToString().Length != 9)
                 {
                     MessageBox.Show("Contacto inválido!");
                     textBox6.Text = "";
@@ -139,54 +153,51 @@ namespace Trabalho_Final
                     return;
                 }
 
-                
+                //--- Pesquisa na BD
 
-                using (SqlConnection SqlConn = new SqlConnection(connectionString))
+                string query = "PROJETO.update_paciente";
+                SqlCommand cmd = new SqlCommand(query, sqlcon);
+                cmd.CommandType = CommandType.StoredProcedure;
+                cmd.Parameters.AddWithValue("nome", nome_box);
+                cmd.Parameters.AddWithValue("contacto", box_contacto);
+                cmd.Parameters.AddWithValue("nif", box_nif);
+                cmd.Parameters.AddWithValue("idade", box_idade);
+                cmd.Parameters.AddWithValue("endereco", box_endereco);
+                cmd.Parameters.Add("@retval", SqlDbType.Int);
+                cmd.Parameters["@retval"].Direction = ParameterDirection.Output;
+                sqlcon.Open();
+                cmd.ExecuteNonQuery();
+                int retval = (int)cmd.Parameters["@retval"].Value;
+                sqlcon.Close();
+
+                if (retval == 0)
                 {
-                    if (SqlConn.State == ConnectionState.Closed)
-                        SqlConn.Open();
-                    //--- Pesquisa na BD
-
-                    SqlConnection conn = new SqlConnection(connectionString);
-                    string query = "PROJETO.update_paciente";
-                    SqlCommand cmd = new SqlCommand(query, conn);
-                    cmd.CommandType = CommandType.StoredProcedure;
-                    cmd.Parameters.AddWithValue("nome", nome_box);
-                    cmd.Parameters.AddWithValue("contacto", box_contacto);
-                    cmd.Parameters.AddWithValue("nif", box_nif);
-                    cmd.Parameters.AddWithValue("idade", box_idade);
-                    cmd.Parameters.AddWithValue("endereco", box_endereco);
-                    cmd.Parameters.Add("@retval", SqlDbType.Int);
-                    cmd.Parameters["@retval"].Direction = ParameterDirection.Output;
-                    conn.Open();
-                    cmd.ExecuteNonQuery();
-                    int retval = (int)cmd.Parameters["@retval"].Value;
-                    conn.Close();
-
-                    if (retval == 0)
-                    {
-                        MessageBox.Show("Não foi possível alterar!");
-                        textBox1.Text = "";
-                        textBox4.Text = "";
-                        textBox5.Text = "";
-                        textBox6.Text = "";
-                        return;
-                    }
-                    else
-                    {
-                        MessageBox.Show("Paciente alterado!");
-                        textBox1.Text = "";
-                        textBox4.Text = "";
-                        textBox5.Text = "";
-                        textBox6.Text = "";
-                    }
-
-                    if (SqlConn.State == ConnectionState.Open)
-                        SqlConn.Close();
+                    MessageBox.Show("Não foi possível alterar!");
+                    textBox1.Text = "";
+                    textBox4.Text = "";
+                    textBox5.Text = "";
+                    textBox6.Text = "";
+                    return;
+                }
+                else
+                {
+                    MessageBox.Show("Paciente alterado!");
+                    textBox1.Text = "";
+                    textBox4.Text = "";
+                    textBox5.Text = "";
+                    textBox6.Text = "";
                 }
 
                 //Load do datagrid de novo
-                showPacientes("SELECT PROJETO.PESSOA.nif,endereco,contacto,idade,nome FROM PROJETO.PACIENTE JOIN PROJETO.PESSOA ON PROJETO.PACIENTE.NIF = PROJETO.PESSOA.NIF");
+                sqlcon.Open();
+                SqlCommand cmd1 = sqlcon.CreateCommand();
+                cmd1.CommandType = CommandType.Text;
+                cmd1.CommandText = "SELECT PROJETO.PESSOA.nif,endereco,contacto,idade,nome FROM PROJETO.PACIENTE JOIN PROJETO.PESSOA ON PROJETO.PACIENTE.NIF = PROJETO.PESSOA.NIF";
+                cmd1.ExecuteNonQuery();
+                SqlDataAdapter da = new SqlDataAdapter(cmd1);
+                dt.Clear();
+                da.Fill(dt);
+                sqlcon.Close();
                 textBox1.Text = "";
                 textBox4.Text = "";
                 textBox5.Text = "";
@@ -200,36 +211,20 @@ namespace Trabalho_Final
         }
         private void btnAdicionar_Click(object sender, EventArgs e)
         {
-
+            dataGridView1.DataSource = dt;
             //Buscar o nif da clinica
             int nif_clinica;
-            using (SqlConnection SqlConn = new SqlConnection(connectionString))
+
+            SqlCommand cmd = new SqlCommand();
+
+            cmd.Connection = sqlcon;
+
+            cmd.CommandType = CommandType.Text;
+            cmd.CommandText = "SELECT PROJETO.get_nif_clinica()";
+            if (sqlcon.State == ConnectionState.Closed)
             {
-
-                if (SqlConn.State == ConnectionState.Closed)
-                    SqlConn.Open();
-                //--- Pesquisa na BD
-
-                // INSERT 
-                //  @especialidade varchar(35), @numero_ordem int, @nif_clinica int, @nome varchar(100), @contacto int, @nif int, @idade int, @endereco varchar(100), @salario decimal(8, 2), @profissao varchar(100) 
-
-                SqlConnection conn = new SqlConnection(connectionString);
-
-                SqlCommand cmd = new SqlCommand();
-
-                cmd.Connection = conn;
-
-                cmd.CommandType = CommandType.Text;
-                cmd.CommandText = "SELECT PROJETO.get_nif_clinica()";
-                if (SqlConn.State == ConnectionState.Closed)
-                {
-                    SqlConn.Open();
-                    nif_clinica = Int32.Parse(cmd.ExecuteScalar().ToString());
-                }
-
-
-                if (SqlConn.State == ConnectionState.Open)
-                    SqlConn.Close();
+                sqlcon.Open();
+                nif_clinica = Int32.Parse(cmd.ExecuteScalar().ToString());
             }
 
             // VALIDAÇÃO DAS CAIXAS DE TEXTO
@@ -243,7 +238,7 @@ namespace Trabalho_Final
 
             int box_contacto;
             bool sucess = Int32.TryParse(textBox6.Text, out box_contacto);
-            if (!sucess || box_contacto.ToString().Length != 9 || !box_contacto.ToString().StartsWith("91"))
+            if (!sucess || box_contacto.ToString().Length != 9)
             {
                 MessageBox.Show("Contacto inválido");
                 textBox6.Text = "";
@@ -275,57 +270,44 @@ namespace Trabalho_Final
                 textBox3.Text = "";
                 return;
             }
+            // INSERT 
 
-            //Inserção de Paciente
-            using (SqlConnection SqlConn = new SqlConnection(connectionString))
+            string query = "PROJETO.insert_paciente";
+            SqlCommand cmd1 = new SqlCommand(query, sqlcon);
+            cmd1.CommandType = CommandType.StoredProcedure;
+            cmd1.Parameters.AddWithValue("nome", nome_box);
+            cmd1.Parameters.AddWithValue("contacto", box_contacto);
+            cmd1.Parameters.AddWithValue("nif", box_nif);
+            cmd1.Parameters.AddWithValue("idade", box_idade);
+            cmd1.Parameters.AddWithValue("endereco", box_endereco);
+            cmd1.Parameters.Add("@retval", SqlDbType.Int);
+            cmd1.Parameters["@retval"].Direction = ParameterDirection.Output;
+            sqlcon.Open();
+            cmd.ExecuteNonQuery();
+            int retval = (int)cmd.Parameters["@retval"].Value;
+            sqlcon.Close();
+
+            if (retval == -1)
             {
-                if (SqlConn.State == ConnectionState.Closed)
-                    SqlConn.Open();
-                //--- Pesquisa na BD
-
-                // INSERT 
-
-                SqlConnection conn = new SqlConnection(connectionString);
-                string query = "PROJETO.insert_paciente";
-                SqlCommand cmd = new SqlCommand(query, conn);
-                cmd.CommandType = CommandType.StoredProcedure;
-                cmd.Parameters.AddWithValue("nome", nome_box);
-                cmd.Parameters.AddWithValue("contacto", box_contacto);
-                cmd.Parameters.AddWithValue("nif", box_nif);
-                cmd.Parameters.AddWithValue("idade", box_idade);
-                cmd.Parameters.AddWithValue("endereco", box_endereco);
-                cmd.Parameters.Add("@retval", SqlDbType.Int);
-                cmd.Parameters["@retval"].Direction = ParameterDirection.Output;
-                conn.Open();
-                cmd.ExecuteNonQuery();
-                int retval = (int)cmd.Parameters["@retval"].Value;
-                conn.Close();
-
-                if (retval == -1)
-                {
-                    MessageBox.Show("Nif já existente!");
-                    textBox4.Text = "";
-                    return;
-                }
-                else if(retval == 0){
-                    MessageBox.Show("Nao foi possível inserir paciente!");
-                    textBox1.Text = "";
-                    textBox4.Text = "";
-                    textBox5.Text = "";
-                    textBox6.Text = "";
-                    return;
-                }
-                else
-                {
-                    MessageBox.Show("Adicionado!");
-                    textBox1.Text = "";
-                    textBox4.Text = "";
-                    textBox5.Text = "";
-                    textBox6.Text = "";
-                }
-
-                if (SqlConn.State == ConnectionState.Open)
-                    SqlConn.Close();
+                MessageBox.Show("Nif já existente!");
+                textBox4.Text = "";
+                return;
+            }
+            else if(retval == 0){
+                MessageBox.Show("Nao foi possível inserir paciente!");
+                textBox1.Text = "";
+                textBox4.Text = "";
+                textBox5.Text = "";
+                textBox6.Text = "";
+                return;
+            }
+            else
+            {
+                MessageBox.Show("Adicionado!");
+                textBox1.Text = "";
+                textBox4.Text = "";
+                textBox5.Text = "";
+                textBox6.Text = "";
             }
 
             //limpar as text box todas
@@ -336,11 +318,20 @@ namespace Trabalho_Final
             textBox6.Text = "";
 
             //fazer load do datagrid de novo
-            showPacientes("SELECT PROJETO.PESSOA.nif,endereco,contacto,idade,nome FROM PROJETO.PACIENTE JOIN PROJETO.PESSOA ON PROJETO.PACIENTE.NIF = PROJETO.PESSOA.NIF");
+            sqlcon.Open();
+            SqlCommand cmd2 = sqlcon.CreateCommand();
+            cmd2.CommandType = CommandType.Text;
+            cmd2.CommandText = "SELECT PROJETO.PESSOA.nif,endereco,contacto,idade,nome FROM PROJETO.PACIENTE JOIN PROJETO.PESSOA ON PROJETO.PACIENTE.NIF = PROJETO.PESSOA.NIF";
+            cmd2.ExecuteNonQuery();
+            SqlDataAdapter da = new SqlDataAdapter(cmd2);
+            dt.Clear();
+            da.Fill(dt);
+            sqlcon.Close();
         }
 
         private void button2_Click(object sender, EventArgs e)
         {
+            dataGridView1.DataSource = dt;
             // VALIDAÇÃO DAS CAIXAS DE TEXTO
             int box_codigo;
             bool success = Int32.TryParse(textBox7.Text,out box_codigo);
@@ -366,7 +357,7 @@ namespace Trabalho_Final
             }
 
             double box_desconto;
-            success = Double.TryParse(textBox8.Text, out box_desconto);
+            success = Double.TryParse(textBox8.Text.ToString().Replace('.',','), out box_desconto);
 
             if (success && box_desconto.ToString().IndexOf(',') != -1)
             {
@@ -377,7 +368,7 @@ namespace Trabalho_Final
                     return;
                 }
             }
-            else
+            else if(success)
             {
                 if (box_desconto.ToString().Length > 5 || textBox8.Text == "")
                 {
@@ -386,99 +377,99 @@ namespace Trabalho_Final
                     return;
                 }
             }
-
-
-            //Inserção de Cheque dentista
-            using (SqlConnection SqlConn = new SqlConnection(connectionString))
+            else
             {
-                if (SqlConn.State == ConnectionState.Closed)
-                    SqlConn.Open();
-                //--- Pesquisa na BD
-
-                // INSERT 
-
-                SqlConnection conn = new SqlConnection(connectionString);
-                string query = "PROJETO.insert_check_dentista";
-                SqlCommand cmd = new SqlCommand(query, conn);
-                cmd.CommandType = CommandType.StoredProcedure;
-                cmd.Parameters.AddWithValue("codigo", box_codigo);
-                cmd.Parameters.AddWithValue("valor", box_desconto);
-                cmd.Parameters.AddWithValue("validade", box_validade);
-                cmd.Parameters.Add("@retval", SqlDbType.Int);
-                cmd.Parameters["@retval"].Direction = ParameterDirection.Output;
-                conn.Open();
-                cmd.ExecuteNonQuery();
-                int retval = (int)cmd.Parameters["@retval"].Value;
-                conn.Close();
-
-                if (retval == -1)
-                {
-                    MessageBox.Show("Código já existente!");
-                    textBox7.Text = "";
-                    return;
-                }
-                else if (retval == 0)
-                {
-                    MessageBox.Show("Não foi possível adicionar cheque!");
-                    textBox9.Text = "";
-                    return;
-                }
-                else
-                {
-                    MessageBox.Show("Cheque dentista adicionado!");
-                    textBox7.Text = "";
-                    textBox8.Text = "";
-                    textBox9.Text = "";
-                }
-
-                if (SqlConn.State == ConnectionState.Open)
-                    SqlConn.Close();
+                MessageBox.Show("Desconto inválido!");
+                textBox8.Text = "";
+                return;
             }
 
-            //limpar as text box todas
-            textBox7.Text = "";
-            textBox8.Text = "";
-            textBox9.Text = "";
+            // INSERT 
+
+            string query = "PROJETO.insert_check_dentista";
+            SqlCommand cmd = new SqlCommand(query, sqlcon);
+            cmd.CommandType = CommandType.StoredProcedure;
+            cmd.Parameters.AddWithValue("codigo", box_codigo);
+            cmd.Parameters.AddWithValue("valor", box_desconto);
+            cmd.Parameters.AddWithValue("validade", box_validade);
+            cmd.Parameters.Add("@retval", SqlDbType.Int);
+            cmd.Parameters["@retval"].Direction = ParameterDirection.Output;
+            sqlcon.Open();
+            cmd.ExecuteNonQuery();
+            int retval = (int)cmd.Parameters["@retval"].Value;
+            sqlcon.Close();
+
+            if (retval == -1)
+            {
+                MessageBox.Show("Código já existente!");
+                textBox7.Text = "";
+                return;
+            }
+            else if (retval == 0)
+            {
+                MessageBox.Show("Não foi possível adicionar cheque!");
+                textBox9.Text = "";
+                return;
+            }
+            else
+            {
+                MessageBox.Show("Cheque dentista adicionado!");
+                textBox7.Text = "";
+                textBox8.Text = "";
+                textBox9.Text = "";
+            }
         }
 
         private void btnApagar_Click(object sender, EventArgs e)
         {
-            if (dataGridView1.SelectedRows.Count == 1)
+            dataGridView1.DataSource = dt;
+            if (dataGridView1.SelectedCells.Count == 1)
             {
-                using (SqlConnection SqlConn = new SqlConnection(connectionString))
+
+                int nif;
+                bool success = Int32.TryParse(dataGridView1.CurrentRow.Cells["nif"].Value.ToString(), out nif);
+                if (!success)
                 {
-                    if (SqlConn.State == ConnectionState.Closed)
-                        SqlConn.Open();
-                    //--- Pesquisa na BD
-
-                    int nif;
-                    bool success = Int32.TryParse(dataGridView1.SelectedRows[0].Cells["nif"].Value.ToString(), out nif);
-                    if (!success)
-                    {
-                        System.Windows.Forms.MessageBox.Show("Não foi possível obter valor do 'nif'!");
-                        return;
-                    }
-
-                    SqlConnection conn = new SqlConnection(connectionString);
-                    string query = "PROJETO.remove_paciente";
-                    SqlCommand cmd = new SqlCommand(query, conn);
-                    cmd.CommandType = CommandType.StoredProcedure;
-                    cmd.Parameters.AddWithValue("nif", nif);
-                    conn.Open();
-                    cmd.ExecuteNonQuery();
-                    conn.Close();
-
-
-                    if (SqlConn.State == ConnectionState.Open)
-                        SqlConn.Close();
+                    System.Windows.Forms.MessageBox.Show("Não foi possível obter valor do 'nif'!");
+                    return;
                 }
 
-                MessageBox.Show("Paciente eliminado com sucesso!");
+                string query = "PROJETO.remove_paciente";
+                SqlCommand cmd = new SqlCommand(query, sqlcon);
+                cmd.CommandType = CommandType.StoredProcedure;
+                cmd.Parameters.AddWithValue("nif", nif);
+                cmd.Parameters.Add("@retval", SqlDbType.Int);
+                cmd.Parameters["@retval"].Direction = ParameterDirection.Output;
+                sqlcon.Open();
+                cmd.ExecuteNonQuery();
+                int retval = (int)cmd.Parameters["@retval"].Value;
+                sqlcon.Close();
+
+
+                if (retval == 0)
+                {
+                    MessageBox.Show("Não foi possível remover paciente!");
+                    return;
+                }
+                else
+                {
+                    MessageBox.Show("Paciente removido!");
+                }
+
+                sqlcon.Open();
+                SqlCommand cmd1 = sqlcon.CreateCommand();
+                cmd1.CommandType = CommandType.Text;
+                cmd1.CommandText = "SELECT PROJETO.PESSOA.nif,endereco,contacto,idade,nome FROM PROJETO.PACIENTE JOIN PROJETO.PESSOA ON PROJETO.PACIENTE.NIF = PROJETO.PESSOA.NIF";
+                cmd1.ExecuteNonQuery();
+                SqlDataAdapter da = new SqlDataAdapter(cmd1);
+                dt.Clear();
+                da.Fill(dt);
+                sqlcon.Close();
 
             }
             else
             {
-                MessageBox.Show("Tem de selecionar um paciente para ser possível removê-lo!");
+                MessageBox.Show("Tem de selecionar um e apenas um paciente para ser possível removê-lo!");
                 return;
             }
         }

@@ -14,6 +14,8 @@ namespace Trabalho_Final
 {
     public partial class Home : UserControl
     {
+        private DataTable dt = new DataTable();
+        SqlConnection sqlcon = new SqlConnection(@"Data Source=tcp:mednat.ieeta.pt\\SQLSERVER,8101;Initial Catalog=p5g4; user=p5g4; password=TiagoLucas2000");
         private static Home _instance;
         public static Home Instance
         {
@@ -31,72 +33,53 @@ namespace Trabalho_Final
 
         private void Home_Load(object sender, EventArgs e)
         {
-            const string connectionString = @"Data Source=tcp:mednat.ieeta.pt\\SQLSERVER,8101;Initial Catalog=p5g4; user=p5g4; password=TiagoLucas2000";
-
-            using (SqlConnection SqlConn = new SqlConnection(connectionString))
-            {
-              
-                if (SqlConn.State == ConnectionState.Closed)
-                    SqlConn.Open();
-                //--- Pesquisa na BD
-                SqlDataAdapter da = new SqlDataAdapter("SELECT * FROM PROJETO.CONSULTA", SqlConn);
-                //--- Converte resultado para uma Tabela
-                DataTable dt = new DataTable();
-                da.Fill(dt);
-                //--- Preenche o DataGrid com a Tabela
-                dataGridView1.DataSource = dt;
-                if (SqlConn.State == ConnectionState.Open)
-                    SqlConn.Close();
-            }
+            dataGridView1.DataSource = dt;
+            sqlcon.Open();
+            SqlCommand cmd1 = sqlcon.CreateCommand();
+            cmd1.CommandType = CommandType.Text;
+            cmd1.CommandText = "SELECT * FROM PROJETO.CONSULTA";
+            cmd1.ExecuteNonQuery();
+            SqlDataAdapter da = new SqlDataAdapter(cmd1);
+            dt.Clear();
+            da.Fill(dt);
+            sqlcon.Close();
         }
 
         private void btnProcuraConsulta_Click(object sender, EventArgs e)
         {
-            const string connectionString = @"Data Source=tcp:mednat.ieeta.pt\\SQLSERVER,8101;Initial Catalog=p5g4; user=p5g4; password=TiagoLucas2000";
-            try
-
-            {
-                SqlConnection con = new SqlConnection(connectionString);
-                if(con.State == ConnectionState.Closed)
-                    con.Open();
-
-
-                
-                string search = textBox1.Text.Trim();
-                var split = search.Split('/');
-                string cmdst;
+            dataGridView1.DataSource = dt;
+            string search = textBox1.Text.Trim();
+            var split = search.Split('/');
 
                 //TODO pesquisa dinamica por exemplo */*/2022 devolve todas as consultas de 2022
-                if (search=="")
-                    cmdst = "select * from PROJETO.CONSULTA ";
-                else
-                {
-
-                    string[] dataspt = search.Split('/');;
-                    string procura = dataspt[2].ToString() + "-" + dataspt[1].ToString() + "-" + dataspt[0].ToString();
-                    cmdst = "select * from PROJETO.CONSULTA where  dataa='" + procura + "'";
-                }
-                    
-
-                SqlDataAdapter adap = new SqlDataAdapter(cmdst, con);
-
-                DataTable ds = new DataTable();
-
-
-                adap.Fill(ds);
-
-                dataGridView1.DataSource = ds;
-
-                if (con.State == ConnectionState.Open)
-                    con.Close();
-            }
-
-            //TODO verificação
-            catch (Exception pp)
-
+            if (search == "")
             {
-                System.Windows.Forms.MessageBox.Show("Unable to connect!");
+                sqlcon.Open();
+                SqlCommand cmd1 = sqlcon.CreateCommand();
+                cmd1.CommandType = CommandType.Text;
+                cmd1.CommandText = "SELECT * FROM PROJETO.CONSULTA";
+                cmd1.ExecuteNonQuery();
+                SqlDataAdapter da = new SqlDataAdapter(cmd1);
+                dt.Clear();
+                da.Fill(dt);
+                sqlcon.Close();
             }
+            else
+            {
+                string[] dataspt = search.Split('/');;
+                string procura = dataspt[2].ToString() + "-" + dataspt[1].ToString() + "-" + dataspt[0].ToString();
+                sqlcon.Open();
+                SqlCommand cmd1 = sqlcon.CreateCommand();
+                cmd1.CommandType = CommandType.Text;
+                cmd1.CommandText = "SELECT * FROM PROJETO.CONSULTA WHERE dataa=@procura";
+                cmd1.Parameters.AddWithValue("procura", procura);
+                cmd1.ExecuteNonQuery();
+                SqlDataAdapter da = new SqlDataAdapter(cmd1);
+                dt.Clear();
+                da.Fill(dt);
+                sqlcon.Close();
+            }
+                    
         }
 
         private void AdiConsulta_Click(object sender, EventArgs e)

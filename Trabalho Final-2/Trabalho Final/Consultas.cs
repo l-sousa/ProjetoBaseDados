@@ -15,7 +15,8 @@ namespace Trabalho_Final
 {
     public partial class Consultas : UserControl
     {
-        const string connectionString = @"Data Source=tcp:mednat.ieeta.pt\\SQLSERVER,8101;Initial Catalog=p5g4; user=p5g4; password=TiagoLucas2000";
+        private DataTable dt = new DataTable();
+        SqlConnection sqlcon = new SqlConnection(@"Data Source=tcp:mednat.ieeta.pt\\SQLSERVER,8101;Initial Catalog=p5g4; user=p5g4; password=TiagoLucas2000");
 
         private static Consultas _instance;
         public static Consultas Instance
@@ -33,81 +34,62 @@ namespace Trabalho_Final
             InitializeComponent();
         }
 
-        private void show_consultas(string query)
-        {
-            using (SqlConnection SqlConn = new SqlConnection(connectionString))
-            {
-
-                if (SqlConn.State == ConnectionState.Closed)
-                    SqlConn.Open();
-                //--- Pesquisa na BD
-                SqlDataAdapter da = new SqlDataAdapter(query, SqlConn);
-                //--- Converte resultado para uma Tabela
-                DataTable dt = new DataTable();
-                da.Fill(dt);
-                //--- Preenche o DataGrid com a Tabela
-                dataGridView1.DataSource = dt;
-                if (SqlConn.State == ConnectionState.Open)
-                    SqlConn.Close();
-            }
-        }
-
         private void Consultas_Load(object sender, EventArgs e)
         {
-            show_consultas("SELECT * FROM PROJETO.CONSULTA");
+            dataGridView1.DataSource = dt;
+            sqlcon.Open();
+            SqlCommand cmd1 = sqlcon.CreateCommand();
+            cmd1.CommandType = CommandType.Text;
+            cmd1.CommandText = "SELECT * FROM PROJETO.CONSULTA";
+            cmd1.ExecuteNonQuery();
+            SqlDataAdapter da = new SqlDataAdapter(cmd1);
+            dt.Clear();
+            da.Fill(dt);
+            sqlcon.Close();
         }
 
         private void btnProcurar_Click(object sender, EventArgs e)
         {
-            try
+            dataGridView1.DataSource = dt;
+
+            string search = textBox7.Text.Trim();
+            var split = search.Split('/');
+            //TODO pesquisa dinamica por exemplo */*/2022 devolve todas as consultas de 2022
+            if (search == "")
             {
-                SqlConnection con = new SqlConnection(connectionString);
-                if (con.State == ConnectionState.Closed)
-                    con.Open();
-
-
-
-                string search = textBox7.Text.Trim();
-                var split = search.Split('/');
-                string cmdst;
-
-                //TODO pesquisa dinamica por exemplo */*/2022 devolve todas as consultas de 2022
-                if (search == "")
-                    cmdst = "select * from PROJETO.CONSULTA ";
-                else
-                {
-
-                    string[] dataspt = search.Split('/'); ;
-                    string procura = dataspt[2].ToString() + "-" + dataspt[1].ToString() + "-" + dataspt[0].ToString();
-                    cmdst = "select * from PROJETO.CONSULTA where  dataa='" + procura + "'";
-                    textBox7.Text = "";
-                }
-
-
-                SqlDataAdapter adap = new SqlDataAdapter(cmdst, con);
-
-                DataTable ds = new DataTable();
-
-
-                adap.Fill(ds);
-
-                dataGridView1.DataSource = ds;
-
-                if (con.State == ConnectionState.Open)
-                    con.Close();
+                sqlcon.Open();
+                SqlCommand cmd1 = sqlcon.CreateCommand();
+                cmd1.CommandType = CommandType.Text;
+                cmd1.CommandText = "select * from PROJETO.CONSULTA";
+                cmd1.ExecuteNonQuery();
+                SqlDataAdapter da = new SqlDataAdapter(cmd1);
+                dt.Clear();
+                da.Fill(dt);
+                sqlcon.Close();
             }
-
-            catch (Exception pp)
-
+            else
             {
-                System.Windows.Forms.MessageBox.Show("Impossível conectar!");
-            }
+                string[] dataspt = search.Split('/'); ;
+                string procura = dataspt[2].ToString() + "-" + dataspt[1].ToString() + "-" + dataspt[0].ToString();
+                sqlcon.Open();
+                SqlCommand cmd1 = sqlcon.CreateCommand();
+                cmd1.CommandType = CommandType.Text;
+                cmd1.CommandText = "select * from PROJETO.CONSULTA WHERE dataa=@procura";
+                cmd1.Parameters.AddWithValue("procura", procura);
+                cmd1.ExecuteNonQuery();
+                SqlDataAdapter da = new SqlDataAdapter(cmd1);
+                dt.Clear();
+                da.Fill(dt);
+                sqlcon.Close();
+                textBox7.Text = "";
+
+             }
         }
 
         private void btnAdicionar_Click(object sender, EventArgs e)
         {
             double preco;
-            
+            dataGridView1.DataSource = dt;
             bool success = Double.TryParse(textBox6.Text.Trim().Replace('.',','),out preco);
             if(preco.ToString() == "0")
             {
@@ -153,56 +135,44 @@ namespace Trabalho_Final
                 return;
             }
 
-            using (SqlConnection SqlConn = new SqlConnection(connectionString))
+            // INSERT 
+            string query = "PROJETO.insert_consulta";
+            SqlCommand cmd = new SqlCommand(query, sqlcon);
+            cmd.CommandType = CommandType.StoredProcedure;
+            cmd.Parameters.AddWithValue("preco", preco);
+            cmd.Parameters.AddWithValue("duracao", duracao);
+            cmd.Parameters.AddWithValue("nif_dentista", dentista);
+            cmd.Parameters.AddWithValue("dataa", procura);
+            cmd.Parameters.Add("@retval", SqlDbType.Int);
+            cmd.Parameters["@retval"].Direction = ParameterDirection.Output;
+            sqlcon.Open();
+            cmd.ExecuteNonQuery();
+            int retval = (int)cmd.Parameters["@retval"].Value;
+            sqlcon.Close();
+
+
+            if (retval == -1)
             {
-                if (SqlConn.State == ConnectionState.Closed)
-                    SqlConn.Open();
-                //--- Pesquisa na BD
-
-                // INSERT 
-
-                SqlConnection conn = new SqlConnection(connectionString);
-                string query = "PROJETO.insert_consulta";
-                SqlCommand cmd = new SqlCommand(query, conn);
-                cmd.CommandType = CommandType.StoredProcedure;
-                cmd.Parameters.AddWithValue("preco", preco);
-                cmd.Parameters.AddWithValue("duracao", duracao);
-                cmd.Parameters.AddWithValue("nif_dentista", dentista);
-                cmd.Parameters.AddWithValue("dataa", procura);
-                cmd.Parameters.Add("@retval", SqlDbType.Int);
-                cmd.Parameters["@retval"].Direction = ParameterDirection.Output;
-                conn.Open();
-                cmd.ExecuteNonQuery();
-                int retval = (int)cmd.Parameters["@retval"].Value;
-                conn.Close();
-
-
-                if (retval == -1)
-                {
-                    MessageBox.Show("Nif de dentista não existe!");
-                    textBox3.Text = "";
-                    return;
-                }
-                else if (retval == 0)
-                {
-                    MessageBox.Show("Nao foi possível inserir consulta!");
-                    textBox2.Text = "";
-                    textBox3.Text = "";
-                    textBox5.Text = "";
-                    textBox6.Text = "";
-                    return;
-                }
-                else
-                {
-                    MessageBox.Show("Adicionada a consulta!");
-                    textBox2.Text = "";
-                    textBox3.Text = "";
-                    textBox5.Text = "";
-                    textBox6.Text = "";
-                }
-
-                if (SqlConn.State == ConnectionState.Open)
-                    SqlConn.Close();
+                MessageBox.Show("Nif de dentista não existe!");
+                textBox3.Text = "";
+                return;
+            }
+            else if (retval == 0)
+            {
+                MessageBox.Show("Nao foi possível inserir consulta!");
+                textBox2.Text = "";
+                textBox3.Text = "";
+                textBox5.Text = "";
+                textBox6.Text = "";
+                return;
+            }
+            else
+            {
+                MessageBox.Show("Adicionada a consulta!");
+                textBox2.Text = "";
+                textBox3.Text = "";
+                textBox5.Text = "";
+                textBox6.Text = "";
             }
 
             //limpar as text box todas
@@ -212,13 +182,22 @@ namespace Trabalho_Final
             textBox6.Text = "";
 
             //fazer load do datagrid de novo
-            show_consultas("SELECT * FROM PROJETO.CONSULTA");
+            sqlcon.Open();
+            SqlCommand cmd1 = sqlcon.CreateCommand();
+            cmd1.CommandType = CommandType.Text;
+            cmd1.CommandText = "SELECT * FROM PROJETO.CONSULTA";
+            cmd1.ExecuteNonQuery();
+            SqlDataAdapter da = new SqlDataAdapter(cmd1);
+            dt.Clear();
+            da.Fill(dt);
+            sqlcon.Close();
         }
 
 
        
         private void btnAlterar_Click(object sender, EventArgs e)
         {
+            dataGridView1.DataSource = dt;
             if (dataGridView1.SelectedCells.Count == 1)
             {
                 int duracao_box;
@@ -268,63 +247,58 @@ namespace Trabalho_Final
                 string[] dataspt = textBox2.Text.Split('/'); ;
                 string procura = dataspt[2].ToString() + "-" + dataspt[1].ToString() + "-" + dataspt[0].ToString();
 
+                string query = "PROJETO.update_consulta";
+                SqlCommand cmd = new SqlCommand(query, sqlcon);
+                cmd.CommandType = CommandType.StoredProcedure;
+                cmd.Parameters.AddWithValue("codigo", codigo);
+                cmd.Parameters.AddWithValue("duracao", duracao_box);
+                cmd.Parameters.AddWithValue("preco", box_preco);
+                cmd.Parameters.AddWithValue("nif_dentista", dentista);
+                cmd.Parameters.AddWithValue("dataa", procura);
+                cmd.Parameters.Add("@retval", SqlDbType.Int);
+                cmd.Parameters["@retval"].Direction = ParameterDirection.Output;
+                sqlcon.Open();
+                cmd.ExecuteNonQuery();
+                int retval = (int)cmd.Parameters["@retval"].Value;
+                sqlcon.Close();
 
-
-                using (SqlConnection SqlConn = new SqlConnection(connectionString))
+                if (retval == -1)
                 {
-                    if (SqlConn.State == ConnectionState.Closed)
-                        SqlConn.Open();
-                    //--- Pesquisa na BD
-
-                    SqlConnection conn = new SqlConnection(connectionString);
-                    string query = "PROJETO.update_consulta";
-                    SqlCommand cmd = new SqlCommand(query, conn);
-                    cmd.CommandType = CommandType.StoredProcedure;
-                    cmd.Parameters.AddWithValue("codigo", codigo);
-                    cmd.Parameters.AddWithValue("duracao", duracao_box);
-                    cmd.Parameters.AddWithValue("preco", box_preco);
-                    cmd.Parameters.AddWithValue("nif_dentista", dentista);
-                    cmd.Parameters.AddWithValue("dataa", procura);
-                    cmd.Parameters.Add("@retval", SqlDbType.Int);
-                    cmd.Parameters["@retval"].Direction = ParameterDirection.Output;
-                    conn.Open();
-                    cmd.ExecuteNonQuery();
-                    int retval = (int)cmd.Parameters["@retval"].Value;
-                    conn.Close();
-
-                    if (retval == -1)
-                    {
-                        MessageBox.Show("Nif de dentista não existe");
-                        textBox2.Text = "";
-                        textBox3.Text = "";
-                        textBox5.Text = "";
-                        textBox6.Text = "";
-                        return;
-                    }
-                    else if(retval == 0)
-                    {
-                        MessageBox.Show("Não foi possível alterar!");
-                        textBox2.Text = "";
-                        textBox3.Text = "";
-                        textBox5.Text = "";
-                        textBox6.Text = "";
-                        return;
-                    }
-                    else
-                    {
-                        MessageBox.Show("Paciente alterado!");
-                        textBox2.Text = "";
-                        textBox3.Text = "";
-                        textBox5.Text = "";
-                        textBox6.Text = "";
-                    }
-
-                    if (SqlConn.State == ConnectionState.Open)
-                        SqlConn.Close();
+                    MessageBox.Show("Nif de dentista não existe");
+                    textBox2.Text = "";
+                    textBox3.Text = "";
+                    textBox5.Text = "";
+                    textBox6.Text = "";
+                    return;
+                }
+                else if(retval == 0)
+                {
+                    MessageBox.Show("Não foi possível alterar!");
+                    textBox2.Text = "";
+                    textBox3.Text = "";
+                    textBox5.Text = "";
+                    textBox6.Text = "";
+                    return;
+                }
+                else
+                {
+                    MessageBox.Show("Paciente alterado!");
+                    textBox2.Text = "";
+                    textBox3.Text = "";
+                    textBox5.Text = "";
+                    textBox6.Text = "";
                 }
 
                 //Load do datagrid de novo
-                show_consultas("SELECT * FROM PROJETO.CONSULTA");
+                sqlcon.Open();
+                SqlCommand cmd1 = sqlcon.CreateCommand();
+                cmd1.CommandType = CommandType.Text;
+                cmd1.CommandText = "SELECT * FROM PROJETO.CONSULTA";
+                cmd1.ExecuteNonQuery();
+                SqlDataAdapter da = new SqlDataAdapter(cmd1);
+                dt.Clear();
+                da.Fill(dt);
+                sqlcon.Close();
             }
             else
             {
@@ -336,56 +310,56 @@ namespace Trabalho_Final
         // APAGAR
         private void btnApagar_Click(object sender, EventArgs e)
         {
+            dataGridView1.DataSource = dt;
             if (dataGridView1.SelectedCells.Count == 1)
             {
-                using (SqlConnection SqlConn = new SqlConnection(connectionString))
+
+                int codigo;
+                bool success = Int32.TryParse(dataGridView1.CurrentRow.Cells["codigo"].Value.ToString(), out codigo);
+                if (!success)
                 {
-                    if (SqlConn.State == ConnectionState.Closed)
-                        SqlConn.Open();
-                    //--- Pesquisa na BD
-
-                    int codigo;
-                    bool success = Int32.TryParse(dataGridView1.CurrentRow.Cells["codigo"].Value.ToString(), out codigo);
-                    if (!success)
-                    {
-                        System.Windows.Forms.MessageBox.Show("Não foi possível obter valor do 'código'!");
-                        return;
-                    }
-
-                    SqlConnection conn = new SqlConnection(connectionString);
-                    string query = "PROJETO.remove_consulta";
-                    SqlCommand cmd = new SqlCommand(query, conn);
-                    cmd.CommandType = CommandType.StoredProcedure;
-                    cmd.Parameters.AddWithValue("codigo_consulta", codigo);
-                    cmd.Parameters.Add("@retval", SqlDbType.Int);
-                    cmd.Parameters["@retval"].Direction = ParameterDirection.Output;
-                    conn.Open();
-                    cmd.ExecuteNonQuery();
-                    int retval = (int)cmd.Parameters["@retval"].Value;
-                    conn.Close();
-
-                    if (retval == 0)
-                    {
-                    MessageBox.Show("Não foi possível alterar!");
-                    textBox2.Text = "";
-                    textBox3.Text = "";
-                    textBox5.Text = "";
-                    textBox6.Text = "";
+                    System.Windows.Forms.MessageBox.Show("Não foi possível obter valor do 'código'!");
                     return;
-                    }
-                    else
-                    {
-                    MessageBox.Show("Consulta eliminada!");
-                    textBox2.Text = "";
-                    textBox3.Text = "";
-                    textBox5.Text = "";
-                    textBox6.Text = "";
-                    }
-
-                    if (SqlConn.State == ConnectionState.Open)
-                        SqlConn.Close();
                 }
-                show_consultas("SELECT * FROM PROJETO.CONSULTA");
+
+                string query = "PROJETO.remove_consulta";
+                SqlCommand cmd = new SqlCommand(query, sqlcon);
+                cmd.CommandType = CommandType.StoredProcedure;
+                cmd.Parameters.AddWithValue("codigo_consulta", codigo);
+                cmd.Parameters.Add("@retval", SqlDbType.Int);
+                cmd.Parameters["@retval"].Direction = ParameterDirection.Output;
+                sqlcon.Open();
+                cmd.ExecuteNonQuery();
+                int retval = (int)cmd.Parameters["@retval"].Value;
+                sqlcon.Close();
+
+                if (retval == 0)
+                {
+                MessageBox.Show("Não foi possível alterar!");
+                textBox2.Text = "";
+                textBox3.Text = "";
+                textBox5.Text = "";
+                textBox6.Text = "";
+                return;
+                }
+                else
+                {
+                MessageBox.Show("Consulta eliminada!");
+                textBox2.Text = "";
+                textBox3.Text = "";
+                textBox5.Text = "";
+                textBox6.Text = "";
+                }
+
+                sqlcon.Open();
+                SqlCommand cmd1 = sqlcon.CreateCommand();
+                cmd1.CommandType = CommandType.Text;
+                cmd1.CommandText = "SELECT * FROM PROJETO.CONSULTA";
+                cmd1.ExecuteNonQuery();
+                SqlDataAdapter da = new SqlDataAdapter(cmd1);
+                dt.Clear();
+                da.Fill(dt);
+                sqlcon.Close();
 
             }
             else
