@@ -61,18 +61,18 @@
             // dataGridView1
             // 
             this.dataGridView1.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.dataGridView1.Location = new System.Drawing.Point(3, 81);
+            this.dataGridView1.Location = new System.Drawing.Point(240, 93);
             this.dataGridView1.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.dataGridView1.Name = "dataGridView1";
             this.dataGridView1.RowHeadersVisible = false;
             this.dataGridView1.RowHeadersWidth = 51;
             this.dataGridView1.RowTemplate.Height = 24;
-            this.dataGridView1.Size = new System.Drawing.Size(1014, 329);
+            this.dataGridView1.Size = new System.Drawing.Size(560, 329);
             this.dataGridView1.TabIndex = 74;
             // 
             // btnApagar
             // 
-            this.btnApagar.Location = new System.Drawing.Point(856, 458);
+            this.btnApagar.Location = new System.Drawing.Point(700, 452);
             this.btnApagar.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.btnApagar.Name = "btnApagar";
             this.btnApagar.Size = new System.Drawing.Size(100, 28);
@@ -83,7 +83,7 @@
             // 
             // btnAdicionar
             // 
-            this.btnAdicionar.Location = new System.Drawing.Point(325, 458);
+            this.btnAdicionar.Location = new System.Drawing.Point(240, 452);
             this.btnAdicionar.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.btnAdicionar.Name = "btnAdicionar";
             this.btnAdicionar.Size = new System.Drawing.Size(100, 31);
@@ -95,7 +95,7 @@
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(427, 442);
+            this.label1.Location = new System.Drawing.Point(342, 436);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(45, 17);
             this.label1.TabIndex = 66;
@@ -103,7 +103,7 @@
             // 
             // textBox1
             // 
-            this.textBox1.Location = new System.Drawing.Point(431, 462);
+            this.textBox1.Location = new System.Drawing.Point(346, 456);
             this.textBox1.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.textBox1.Name = "textBox1";
             this.textBox1.Size = new System.Drawing.Size(255, 22);

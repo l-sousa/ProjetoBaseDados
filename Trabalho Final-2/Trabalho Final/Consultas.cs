@@ -123,8 +123,8 @@ namespace Trabalho_Final
                 return;
             }
 
-            string[] dataspt = textBox2.Text.Split('/'); ;
-            string procura = dataspt[2].ToString() + "-" + dataspt[1].ToString() + "-" + dataspt[0].ToString();
+            DateTime data_i = dateTimePicker1.Value;
+            String data_inc = data_i.ToString("yyyy-MM-dd");
 
             int dentista;
             success = Int32.TryParse(textBox3.Text.Trim(), out dentista);
@@ -142,7 +142,7 @@ namespace Trabalho_Final
             cmd.Parameters.AddWithValue("preco", preco);
             cmd.Parameters.AddWithValue("duracao", duracao);
             cmd.Parameters.AddWithValue("nif_dentista", dentista);
-            cmd.Parameters.AddWithValue("dataa", procura);
+            cmd.Parameters.AddWithValue("dataa", data_inc);
             cmd.Parameters.Add("@retval", SqlDbType.Int);
             cmd.Parameters["@retval"].Direction = ParameterDirection.Output;
             sqlcon.Open();
@@ -160,7 +160,7 @@ namespace Trabalho_Final
             else if (retval == 0)
             {
                 MessageBox.Show("Nao foi possível inserir consulta!");
-                textBox2.Text = "";
+                dateTimePicker1.Value = DateTime.Now;
                 textBox3.Text = "";
                 textBox5.Text = "";
                 textBox6.Text = "";
@@ -169,14 +169,14 @@ namespace Trabalho_Final
             else
             {
                 MessageBox.Show("Adicionada a consulta!");
-                textBox2.Text = "";
+                dateTimePicker1.Value = DateTime.Now;
                 textBox3.Text = "";
                 textBox5.Text = "";
                 textBox6.Text = "";
             }
 
             //limpar as text box todas
-            textBox2.Text = "";
+            dateTimePicker1.Value = DateTime.Now;
             textBox3.Text = "";
             textBox5.Text = "";
             textBox6.Text = "";
@@ -244,8 +244,8 @@ namespace Trabalho_Final
                 {
                     Int32.TryParse(dataGridView1.CurrentRow.Cells["nif_dentista"].Value.ToString(), out dentista);
                 }
-                string[] dataspt = textBox2.Text.Split('/'); ;
-                string procura = dataspt[2].ToString() + "-" + dataspt[1].ToString() + "-" + dataspt[0].ToString();
+                DateTime data_i = dateTimePicker1.Value;
+                String data_inc = data_i.ToString("yyyy-MM-dd");
 
                 string query = "PROJETO.update_consulta";
                 SqlCommand cmd = new SqlCommand(query, sqlcon);
@@ -254,7 +254,7 @@ namespace Trabalho_Final
                 cmd.Parameters.AddWithValue("duracao", duracao_box);
                 cmd.Parameters.AddWithValue("preco", box_preco);
                 cmd.Parameters.AddWithValue("nif_dentista", dentista);
-                cmd.Parameters.AddWithValue("dataa", procura);
+                cmd.Parameters.AddWithValue("dataa", data_inc);
                 cmd.Parameters.Add("@retval", SqlDbType.Int);
                 cmd.Parameters["@retval"].Direction = ParameterDirection.Output;
                 sqlcon.Open();
@@ -265,7 +265,7 @@ namespace Trabalho_Final
                 if (retval == -1)
                 {
                     MessageBox.Show("Nif de dentista não existe");
-                    textBox2.Text = "";
+                    dateTimePicker1.Value = DateTime.Now;
                     textBox3.Text = "";
                     textBox5.Text = "";
                     textBox6.Text = "";
@@ -274,7 +274,7 @@ namespace Trabalho_Final
                 else if(retval == 0)
                 {
                     MessageBox.Show("Não foi possível alterar!");
-                    textBox2.Text = "";
+                    dateTimePicker1.Value = DateTime.Now;
                     textBox3.Text = "";
                     textBox5.Text = "";
                     textBox6.Text = "";
@@ -283,7 +283,7 @@ namespace Trabalho_Final
                 else
                 {
                     MessageBox.Show("Paciente alterado!");
-                    textBox2.Text = "";
+                    dateTimePicker1.Value = DateTime.Now;
                     textBox3.Text = "";
                     textBox5.Text = "";
                     textBox6.Text = "";
@@ -336,7 +336,7 @@ namespace Trabalho_Final
                 if (retval == 0)
                 {
                 MessageBox.Show("Não foi possível alterar!");
-                textBox2.Text = "";
+                dateTimePicker1.Value = DateTime.Now;
                 textBox3.Text = "";
                 textBox5.Text = "";
                 textBox6.Text = "";
@@ -345,7 +345,7 @@ namespace Trabalho_Final
                 else
                 {
                 MessageBox.Show("Consulta eliminada!");
-                textBox2.Text = "";
+                dateTimePicker1.Value = DateTime.Now;
                 textBox3.Text = "";
                 textBox5.Text = "";
                 textBox6.Text = "";

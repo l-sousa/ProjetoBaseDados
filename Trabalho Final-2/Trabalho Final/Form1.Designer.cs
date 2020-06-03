@@ -40,7 +40,7 @@
             // 
             // btnPacientes
             // 
-            this.btnPacientes.Location = new System.Drawing.Point(12, 12);
+            this.btnPacientes.Location = new System.Drawing.Point(633, 12);
             this.btnPacientes.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.btnPacientes.Name = "btnPacientes";
             this.btnPacientes.Size = new System.Drawing.Size(105, 34);
@@ -98,7 +98,7 @@
             // 
             // btnHome
             // 
-            this.btnHome.Location = new System.Drawing.Point(637, 12);
+            this.btnHome.Location = new System.Drawing.Point(12, 11);
             this.btnHome.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.btnHome.Name = "btnHome";
             this.btnHome.Size = new System.Drawing.Size(105, 34);

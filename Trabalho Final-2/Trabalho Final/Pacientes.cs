@@ -76,7 +76,7 @@ namespace Trabalho_Final
                 {
                     Value = "%" + search + "%"
                 };
-                cmd1.Parameters.AddWithValue("search", search);
+                cmd1.Parameters.AddWithValue(p.ParameterName, p.Value);
                 cmd1.ExecuteNonQuery();
                 SqlDataAdapter da = new SqlDataAdapter(cmd1);
                 dt.Clear();

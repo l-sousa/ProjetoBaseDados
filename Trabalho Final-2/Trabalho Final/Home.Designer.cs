@@ -38,7 +38,7 @@
             // 
             // AdiConsulta
             // 
-            this.AdiConsulta.Location = new System.Drawing.Point(48, 466);
+            this.AdiConsulta.Location = new System.Drawing.Point(94, 471);
             this.AdiConsulta.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.AdiConsulta.Name = "AdiConsulta";
             this.AdiConsulta.Size = new System.Drawing.Size(209, 34);
@@ -49,7 +49,7 @@
             // 
             // btnProcuraConsulta
             // 
-            this.btnProcuraConsulta.Location = new System.Drawing.Point(353, 423);
+            this.btnProcuraConsulta.Location = new System.Drawing.Point(399, 428);
             this.btnProcuraConsulta.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.btnProcuraConsulta.Name = "btnProcuraConsulta";
             this.btnProcuraConsulta.Size = new System.Drawing.Size(105, 28);
@@ -61,7 +61,7 @@
             // textBox1
             // 
             this.textBox1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.8F);
-            this.textBox1.Location = new System.Drawing.Point(48, 423);
+            this.textBox1.Location = new System.Drawing.Point(94, 428);
             this.textBox1.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.textBox1.Name = "textBox1";
             this.textBox1.Size = new System.Drawing.Size(289, 28);
@@ -70,7 +70,7 @@
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(3, 12);
+            this.label1.Location = new System.Drawing.Point(91, 36);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(70, 17);
             this.label1.TabIndex = 10;
@@ -79,12 +79,12 @@
             // dataGridView1
             // 
             this.dataGridView1.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.dataGridView1.Location = new System.Drawing.Point(0, 31);
+            this.dataGridView1.Location = new System.Drawing.Point(94, 55);
             this.dataGridView1.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.dataGridView1.Name = "dataGridView1";
             this.dataGridView1.RowHeadersVisible = false;
             this.dataGridView1.RowHeadersWidth = 51;
-            this.dataGridView1.Size = new System.Drawing.Size(1015, 357);
+            this.dataGridView1.Size = new System.Drawing.Size(826, 357);
             this.dataGridView1.TabIndex = 9;
             // 
             // Home

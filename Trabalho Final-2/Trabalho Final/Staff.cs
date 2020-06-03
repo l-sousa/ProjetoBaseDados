@@ -78,7 +78,7 @@ namespace Trabalho_Final
                     {
                         Value = "%" + search + "%"
                     };
-                    cmd1.Parameters.AddWithValue("search", search);
+                    cmd1.Parameters.AddWithValue(p.ParameterName, p.Value);
                     cmd1.ExecuteNonQuery();
                     SqlDataAdapter da = new SqlDataAdapter(cmd1);
                     dt.Clear();
@@ -112,7 +112,7 @@ namespace Trabalho_Final
                     {
                         Value = "%" + search + "%"
                     };
-                    cmd1.Parameters.AddWithValue("search", search);
+                    cmd1.Parameters.AddWithValue(p.ParameterName, p.Value);
                     cmd1.ExecuteNonQuery();
                     SqlDataAdapter da = new SqlDataAdapter(cmd1);
                     dt.Clear();
@@ -146,7 +146,7 @@ namespace Trabalho_Final
                     {
                         Value = "%" + search + "%"
                     };
-                    cmd1.Parameters.AddWithValue("search", search);
+                    cmd1.Parameters.AddWithValue(p.ParameterName, p.Value);
                     cmd1.ExecuteNonQuery();
                     SqlDataAdapter da = new SqlDataAdapter(cmd1);
                     dt.Clear();
@@ -180,7 +180,7 @@ namespace Trabalho_Final
                     {
                         Value = "%" + search + "%"
                     };
-                    cmd1.Parameters.AddWithValue("search", search);
+                    cmd1.Parameters.AddWithValue(p.ParameterName, p.Value);
                     cmd1.ExecuteNonQuery();
                     SqlDataAdapter da = new SqlDataAdapter(cmd1);
                     dt.Clear();
@@ -214,7 +214,7 @@ namespace Trabalho_Final
                     {
                         Value = "%" + search + "%"
                     };
-                    cmd1.Parameters.AddWithValue("search", search);
+                    cmd1.Parameters.AddWithValue(p.ParameterName, p.Value);
                     cmd1.ExecuteNonQuery();
                     SqlDataAdapter da = new SqlDataAdapter(cmd1);
                     dt.Clear();
@@ -224,6 +224,12 @@ namespace Trabalho_Final
                     textBox2.Text = "";
                 }
             }
+
+            comboBox1.SelectionLength = 0;
+            Rececionista.Checked = false;
+            Dentista.Checked = false;
+            Todos.Checked = false;
+            Assistente.Checked = false;
 
         }
 
@@ -520,9 +526,30 @@ namespace Trabalho_Final
                 int retval = (int)cmd.Parameters["@retval"].Value;
                 sqlcon.Close();
 
-                
+                if(retval == 0)
+                {
+                    MessageBox.Show("Não foi possível eliminar pessoa do staff!");
+                    return;
+                }
+                else
+                {
+                    MessageBox.Show("Pessoa do staff eliminada com sucesso!");
+                }
 
-                MessageBox.Show("Pessoa do staff eliminada com sucesso!");
+                sqlcon.Open();
+                SqlCommand cmd1 = sqlcon.CreateCommand();
+                cmd1.CommandType = CommandType.Text;
+                cmd1.CommandText = "SELECT PROJETO.STAFF.nif,endereco,contacto,idade,nome FROM PROJETO.STAFF JOIN  PROJETO.PESSOA ON PROJETO.PESSOA.nif=PROJETO.STAFF.nif";
+                cmd1.ExecuteNonQuery();
+                SqlDataAdapter da = new SqlDataAdapter(cmd1);
+                dt.Clear();
+                da.Fill(dt);
+                sqlcon.Close();
+
+                Rececionista.Checked = false;
+                Dentista.Checked = false;
+                Todos.Checked = false;
+                Assistente.Checked = false;
 
             }
             else
@@ -679,8 +706,8 @@ namespace Trabalho_Final
                 if (retval == -1)
                 {
                     MessageBox.Show("Profissão não coincide com o membro da staff selecionado!");
-                    comboBox1.Text = "";
-                    comboBox2.Text = "";
+                    comboBox1.SelectionLength = 0;
+                    comboBox2.SelectionLength = 0;
                     label8.Visible = false;
                     label9.Visible = false;
                     label10.Visible = false;
@@ -700,8 +727,8 @@ namespace Trabalho_Final
                     textBox6.Text = "";
                     textBox7.Text = "";
                     textBox9.Text = "";
-                    comboBox1.Text = "";
-                    comboBox2.Text = "";
+                    comboBox1.SelectionLength = 0;
+                    comboBox2.SelectionLength = 0;
                     label8.Visible = false;
                     label9.Visible = false;
                     label10.Visible = false;
@@ -726,8 +753,8 @@ namespace Trabalho_Final
                     textBox6.Text = "";
                     textBox7.Text = "";
                     textBox9.Text = "";
-                    comboBox1.Text = "";
-                    comboBox2.Text = "";
+                    comboBox1.SelectionLength = 0;
+                    comboBox2.SelectionLength = 0;
                 }
 
                 //fazer load do datagrid de novo
